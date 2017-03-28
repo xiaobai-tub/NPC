@@ -6,7 +6,7 @@ sadasdsadsad
 
 clever as i 
 smart as i
-lovely as me 
+lovely as me aaaa
 
 
 
