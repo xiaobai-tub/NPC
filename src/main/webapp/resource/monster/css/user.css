@@ -1,0 +1,265 @@
+/* 
+* @Author: anchen
+* @Date:   2016-10-25 15:18:51
+* @Last Modified by:   anchen
+* @Last Modified time: 2016-10-25 19:14:53
+*/
+html, body {
+    overflow: hidden;
+    height: 100%;
+}
+.wrap {
+    position: relative;
+    width: 100%;
+    height: 2550px;
+    background: url('../img/bacpic.png') repeat-y;
+}
+@media screen and (min-width: 768px) {
+.wrap {
+  width: 750px;
+  margin: 0 auto; } }
+.title {
+    position: absolute;
+    top: 60px;
+    left: 210px;
+    width: 325px;
+    height: 54px;
+    background: url('../img/title2.png');
+}
+.con {
+    position: absolute;
+    top: 155px;
+    left: 0;
+    width: 100%;
+
+}
+.con dl {
+    float: left;
+    width: 267px;
+    height: 330px;
+    margin: 20px 0 0 50px;
+    padding: 18px;
+    border-radius: 10px;
+    background-color: #fff;
+}
+.con dl dt {
+    width: 100%;
+}
+.con dl dt img {
+    display: block;
+    width: 100%;
+    /* height: 100%; */
+}
+.con dl dd {
+    width: 100%;
+    height: 60px;
+    margin-top: 10px;
+}
+.con dl dd h3 {
+    overflow: hidden;
+    width: 100%;
+    height: 100%;
+    line-height: 29px;
+    font-size: 24px;
+    text-align: center;
+    color: #6e6e6e;
+}
+.close {
+    position: absolute;
+    top: 120px;
+    right: 70px;
+    width: 42px;
+    height: 42px;
+    background: url("../img/close.png") no-repeat;
+}
+.mengban {
+    display: none;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.3);
+    z-index: 10;
+}
+.tip {
+    position: absolute;
+    top: 300px;
+    left: 40px;
+    width: 668px;
+    height: 344px;
+    background: url("../img/tip.png");
+}
+.tip h2 {
+    width: 100%;
+    height: 40px;
+    margin: 110px 0 35px 0;
+    font-family: '黑体';
+    font-size: 34px;
+    text-align: center;
+    line-height: 40px;
+    color: #fff;
+}
+.tip span {
+    display: block;
+    width: 100%;
+    height: 40px;
+    font-family: '黑体';
+    font-size: 34px;
+    text-align: center;
+    line-height: 40px;
+    color: #fff;
+}
+.mengban1, .mengban2 {
+    display: none;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.3);
+    z-index: 10;
+}
+.confirmprize {
+    position: absolute;
+    top: 60px;
+    left: 51px;
+    width: 653px;
+    height: 978px;
+    background: url("../img/confirmprize.png");
+}
+.confirmprize .close {
+    position: absolute;
+    top: 50px;
+    right: 30px;
+    width: 42px;
+    height: 42px;
+    background: url("../img/close.png") no-repeat;
+}
+.prizepic {
+    position: absolute;
+    top: 125px;
+    left: 40px;
+    width: 575px;
+    height: 575px;
+}
+.prizepic img {
+    display: block;
+    width: 100%;
+    height: 100%;
+}
+.prizeinfo {
+    position: absolute;
+    top: 730px;
+    left: 0;
+    width: 100%;
+    height: 210px;
+}
+.describe {
+    overflow: hidden;
+    width: 395px;
+    height: 100px;
+    margin: 0 auto;
+    font-size:40px;
+    font-family: "黑体";
+    text-align: center;
+    line-height: 50px;
+    color: #fff;
+}
+.price, .number {
+    float: left;
+    width: 175px;
+    height: 35px;
+    margin: 25px;
+    line-height: 35px;
+    font-size: 34px;
+    font-family: "黑体";
+    color: #fff;
+}
+.price em, .number em {
+    font-size: 40px;
+    font-family: "黑体";
+    color: #fff;
+}
+.prizeinfo .number {
+    float: right;
+    margin-right: 0px;
+}
+.confirmbtn {
+    position: absolute;
+    top: 1076px;
+    left: 200px;
+    width: 355px;
+    height: 85px;
+    background: url('../img/confirmbtn.png');
+}
+.congratulation {
+    position: absolute;
+    top: 372px;
+    left: 50px;
+    width: 665px;
+    height: 491px;
+    background: url('../img/congratulationwindow.png') no-repeat;
+} 
+.congratulation .close {
+    position: absolute;
+    top: 60px;
+    right: 75px;
+    width: 42px;
+    height: 42px;
+    background: url("../img/close.png") no-repeat;
+}
+.congratitle {
+    position: absolute;
+    top: 100px;
+    left: 250px;
+    width: 157px;
+    height: 67px;
+    background: url("../img/congratulation.png") no-repeat;
+}
+.congratulation h2 {
+    position: absolute;
+    top: 220px;
+    width: 100%;
+    font-size: 40px;
+    text-align: center;
+    color: #fff;
+}
+.productinfo {
+    overflow: hidden;
+    position: absolute;
+    top: 310px;
+    width: 565px;
+    padding: 0 50px; 
+    font-size: 40px;
+    text-align: center;
+    color: #fff;
+}
+.confirmbtn1 {
+    position: absolute;
+    top: 830px;
+    left: 270px;
+    width: 225px;
+    height: 80px;
+    border: 1px solid #fff;
+    border-radius: 5px;
+    font-size: 48px;
+    color: #fff;
+    text-align: center;
+    line-height: 80px;
+    background-color: #2d1917;
+}
+.tip a {
+    position: absolute;
+    top: 380px;
+    left: 215px;
+    width: 225px;
+    height: 80px;
+    border: 1px solid #fff;
+    border-radius: 5px;
+    font-size: 48px;
+    color: #fff;
+    text-align: center;
+    line-height: 80px;
+    background-color: #2d1917;
+}

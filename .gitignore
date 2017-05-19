@@ -1,0 +1,31 @@
+*.class
+
+# Package Files #
+*.jar
+*.war
+*.ear
+
+
+*.bak
+*.class
+*.tmp
+*.log
+build.sh
+integration-repo
+/build/
+
+# IDEA metadata and output dirs
+*.iml
+*.ipr
+*.iws
+
+*.jar
+/webapp/WEB-INF/classes/
+/webapp/WEB-INF/target/
+dev_plan.txt
+/target
+/logs
+
+
+/src/main/resources/application.properties
+

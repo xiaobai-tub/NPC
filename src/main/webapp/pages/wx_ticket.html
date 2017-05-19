@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+<#include "include/header.html"/>
+<body>
+<div onclick="getWxTicket('pOppcuD8PSrC87vKWGD5z9486wW8')">立即领取</div>
+<script type="text/javascript">
+  function getWxTicket(card_id){
+  alert("ssss");
+   $.ajax({type : "POST",url : "${ctx}/share/ticketSign",async : false,data:{"card_id":card_id},success:function(json){
+   alert(json.code);
+                         if(json.code == 0 ){
+                         var card = {cardId:card_id, cardExt:'{"timestamp":"'+json.wxConfig.timestamp+'","signature":"'+json.wxConfig.signature+'"}'};
+                         wx.addCard({
+                               cardList: [card], // 需要添加的卡券列表
+								success: function (res) {
+								
+													    }
+                           });
+                         }
+	                   }
+	                   });
+  }
+</script>
+</body>
+</html>

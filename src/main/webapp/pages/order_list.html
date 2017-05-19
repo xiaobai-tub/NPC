@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html>
+<#include "include/header.html"/>
+<body>
+<div class="page">
+	<div class="content">
+		<div class="search">
+			<input type="text" id="seek" name="seek" placeholder="订单号" class="ipt">
+			<input type="button" value="搜索"  onclick="orderDetails('1');" class="btn_search">
+		</div>
+		
+		<div class="tab_4a">
+			<div class="item on"  id="allOrder" text="" onclick="orderDetails(''); return false;"><span>全部</span></div>
+			<#if allStandByPay == 0>
+			<div class="item"   id="allStandByPay" text="01" onclick="orderDetails('01'); return false;"><span>待付款</span></div>
+			<#else>
+			<div class="item"   id="allStandByPay" text="01" onclick="orderDetails('01'); return false;"><span>待付款<i>${allStandByPay!}</i></span></div>
+			</#if>
+			<#if allDelivery == 0>
+			<div class="item"   id="allDelivery"  text="02" onclick="orderDetails('02'); return false;"><span>待发货</span></div>
+			<#else>
+			<div class="item"   id="allDelivery"  text="02" onclick="orderDetails('02'); return false;"><span>待发货<i>${allDelivery!}</i></span></div>
+			</#if>
+			<#if allStandByCollect == 0>
+			<div class="item"   id="allStandByCollect"  text="03" onclick="orderDetails('03'); return false;"><span>待收货</span></div>
+			<#else>
+			<div class="item"   id="allStandByCollect"  text="03" onclick="orderDetails('03'); return false;"><span>待收货<i>${allStandByCollect!}</i></span></div>
+			</#if>
+			<#if allEvaluate == 0>
+			<div class="item"   id="allEvaluate"  text="08" onclick="orderDetails('08'); return false;"><span>待评价</span></div>
+			<#else>
+			<div class="item"   id="allEvaluate"  text="08" onclick="orderDetails('08'); return false;"><span>待评价<i>${allEvaluate!}</i></span></div>
+			</#if>
+		</div>
+		<div class="product_list" id="product_list">
+		<#list orderList as a>
+		<div class="order_list">
+			<div class="item_top" >
+			<div onclick="orderDetailList('${a.id!}');return false;">
+				<div class="order" >订单号:${a.order_no!}</div>
+				<div class="time">时间:${a.create_date!}</div>
+				<div class="status">订单状态:${a.key_value!}</div>
+				<div class="total">数量:${a.buy_num!}</div>
+				<div class="total">金额:${a.total_price!}元</div>
+				</div>
+				<div class="btn_group">
+					<#if a.order_status == '01'>
+					<div class="btn btn_orange btn_mini" onclick="orderForward('${a.id!}','${a.send_address_id!}');">付款</div>
+					</#if>
+				<#if a.order_status == '02'>
+					<div class="btn btn_orange btn_mini" onClick="myBabyrefund('${a.id!}');">退款</div>
+				</#if>
+				<#if a.order_status == '03'>
+					<div class="btn btn_orange btn_mini" onClick="harvest('${a.id!}');">收货</div>
+					<div class="btn btn_orange btn_mini" onClick="myBabyrefund('${a.id!}');">退款</div>
+				</#if>
+				<#if a.order_status == '08'>
+					<div class="btn btn_orange btn_mini" onclick="orderDetailList('${a.id!}');">评价</div>
+					</#if>
+				</div>
+			</div>
+		</div>
+		</#list>
+		<#if pageNumber lt totalPage>
+			<li id="pageNum1" style="text-align: center;"><div onclick="nextPage1(${pageNumber}); return false;"><span class="more">更多<span class="arrow1"></span><span class="arrow2"></span></span></div></li>
+		</#if>
+		<!--收货弹出框-->
+			
+	</div>
+	<div class="dialog" id="harvest">
+				<div class="dialog_content">
+					<div class="alert">
+					<div class="desc">确定已收货？</div>
+					<div class="ctr">
+					<div class="g2"><span class="btn btn_red btn_mini" onClick="dialogRight()">确定</span></div>
+					<div class="g2"><span class="btn btn_gray btn_mini" onClick="dialogClose()">取消</span></div>
+					</div>
+					</div>	
+				</div>
+			</div>
+	</div>
+</div>
+<script type="text/javascript">
+$(function(){
+ $(".item").removeClass("on");
+ var order_status="${order_status!}";
+ if(order_status == ""){
+	 $("#allOrder").addClass("on");
+ }else if(order_status == "01"){
+	 $("#allStandByPay").addClass("on");
+ }else if(order_status == "02"){
+	 $("#allDelivery").addClass("on");
+ }else if(order_status == "03"){
+	 $("#allStandByCollect").addClass("on");
+ }else if(order_status == "08"){
+	 $("#allEvaluate").addClass("on");
+ }
+ orderDetails=function(type){
+	if(type!="1")
+	{
+		$(".item").removeClass("on");
+		order_status=type;
+		$("#seek").val("");
+		if(order_status == ""){
+			 $("#allOrder").addClass("on");
+		 }else if(order_status == "01"){
+			 $("#allStandByPay").addClass("on");
+		 }else if(order_status == "02"){
+			 $("#allDelivery").addClass("on");
+		 }else if(order_status == "03"){
+			 $("#allStandByCollect").addClass("on");
+		 }else if(order_status == "08"){
+			 $("#allEvaluate").addClass("on");
+		 }
+	}
+	query(order_status);
+ }
+ query=function(order_status){
+	 var seek= $("#seek").val();
+	 $.post("${ctx}/mine/orderDetails",{
+		 order_status:order_status,
+		 seek:seek
+			},function(json){
+				var htm="";
+				var list=json.list;
+				for(var i in list){
+				        htm+="<div class='order_list'>";
+						htm+="<div class='item_top'>";
+						htm+="<div onclick='orderDetailList(\""+list[i].id+"\");return false;'>";
+						var order_no=(list[i].order_no ==null)?"":list[i].order_no;
+						htm+="<div class='order'>订单号:"+order_no+"</div>"; 
+						var create_date=(list[i].create_date ==null)?"":list[i].create_date;
+						htm+="<div class='time'>时间:"+create_date+"</div>";
+						var order_status=(list[i].order_status == null)?"":list[i].key_value;
+						htm+="<div class='status'>订单状态:"+order_status+"</div>";
+						var buy_num=(list[i].buy_num == null)?"0":list[i].buy_num;
+						htm+="<div class='total'>数量:"+buy_num+"</div>";
+						var total_price=(list[i].total_price == null)?"0.00":list[i].total_price;
+						htm+="<div class='total'>金额:"+total_price+"元</div>";
+						htm+="</div>";
+						htm+="<div class='btn_group'>";
+						if(list[i].order_status == "01"){
+							
+							htm+="<div class='btn btn_orange btn_mini' onclick='orderForward(\""+list[i].id+"\",\""+list[i].send_address_id+"\");'>付款</div>";
+						}
+						if(list[i].order_status == "02"){
+							htm+="<div class='btn btn_orange btn_mini' onClick='myBabyrefund(\""+list[i].id+"\");'>退款</div>";
+						}
+						if(list[i].order_status == "03"){
+							htm+="<div class='btn btn_orange btn_mini' onClick='harvest(\""+list[i].id+"\");'>收货</div>";
+							htm+="<div class='btn btn_orange btn_mini' onClick='myBabyrefund(\""+list[i].id+"\");'>退款</div>";
+						}
+						if(list[i].order_status == "08"){
+							htm+="<div class='btn btn_orange btn_mini' onClick='orderDetailList(\""+list[i].id+"\");'>评价</div>";
+						}
+						htm+="</div>";
+						htm+="</div></div>";
+				}
+				if(json.pageNumber < json.totalPage){
+					htm+="<li id='pageNum1' style='text-align: center;'><div onclick='nextPage1("+json.pageNumber+"); return false;'><span class='more'>更多<span class='arrow1'></span><span class='arrow2'></span></span></div></li>";
+				}
+				$("#product_list").html(htm);
+		},'json');
+ }
+ 
+	 nextPage1=function(pnum){
+		 $("#pageNum1").remove();
+		 $.post("${ctx}/mine/orderDetails",{
+			 order_status :order_status,
+			 page:pnum+1
+				},function(json){
+					var htm="";
+					var list=json.list;
+					for(var i in list){
+					        htm+="<div class='order_list'>";
+							htm+="<div class='item_top'>";
+							htm+="<div onclick='orderDetailList(\""+list[i].id+"\");return false;'>";
+							var order_no=(list[i].order_no ==null)?"":list[i].order_no;
+							htm+="<div class='order'>订单号:"+order_no+"</div>"; 
+							var create_date=(list[i].create_date ==null)?"":list[i].create_date;
+							htm+="<div class='time'>时间:"+create_date+"</div>";
+							var order_status=(list[i].order_status == null)?"":list[i].key_value;
+							htm+="<div class='status'>订单状态:"+order_status+"</div>";
+							var buy_num=(list[i].buy_num == null)?"0":list[i].buy_num;
+						    htm+="<div class='total'>数量:"+buy_num+"</div>";
+							var total_price=(list[i].total_price == null)?"0.00":list[i].total_price;
+							htm+="<div class='total'>金额:"+total_price+"元</div>";
+							htm+="</div>";
+							htm+="<div class='btn_group'>";
+							if(list[i].order_status == "01"){
+								htm+="<div class='btn btn_orange btn_mini' onclick='orderForward(\""+list[i].id+"\",\""+list[i].send_address_id+"\");'>付款</div>";
+							}
+							if(list[i].order_status == "02"){
+								htm+="<div class='btn btn_orange btn_mini' onClick='myBabyrefund(\""+list[i].id+"\");'>退款</div>";
+							}
+							if(list[i].order_status == "03"){
+								htm+="<div class='btn btn_orange btn_mini' onClick='harvest(\""+list[i].id+"\");'>收货</div>";
+								htm+="<div class='btn btn_orange btn_mini' onClick='myBabyrefund(\""+list[i].id+"\");'>退款</div>";
+							}
+							if(list[i].order_status == "08"){
+								htm+="<div class='btn btn_orange btn_mini' onClick='orderDetailList(\""+list[i].id+"\");'>评价</div>";
+							}
+							htm+="</div>";
+							htm+="</div></div>";
+					}
+					if(json.pageNumber < json.totalPage){
+						htm+="<li id='pageNum1' style='text-align: center;'><div onclick='nextPage1("+json.pageNumber+"); return false;'><span class='more'>更多<span class='arrow1'></span><span class='arrow2'></span></span></div></li>";
+					}
+					$("#product_list").append(htm);
+			},'json');
+		}
+	 harvest=function(id){
+		 dialog("#harvest");
+			dialogRight=function(){
+				dialogClose();
+				$.ajax({
+					type:"POST",
+					url:"${ctx}/mine/harvest?totalId="+id,
+					success : function(json){
+						if(json.code == 0){
+							window.location.href="${ctx}/mine/orderDetails?order_status="+order_status+"&type="+"1";
+						}else{
+							dialog('#ok',3000,json.msg);
+						}
+					}
+				});
+			}
+	 }
+ 
+ $(".addr_list .item").swipe({
+		swipe:function(event, direction, distance, duration, fingerCount) {
+			if(direction == "left"){
+				//alert("left")
+				$(this).addClass("on")
+			}else if(direction == "right"){
+				//alert("right")
+				$(this).removeClass("on")
+			}
+		}
+	});
+ babyCommodityDetailList = function(commodity_id){
+		 window.location.href ="${ctx}/mine/babyCommodityDetailList?id="+commodity_id;
+	
+ }
+ orderForward = function(value,address){
+	 window.location.href ="${ctx}/pay/orderForwardConfirm?total_id="+value+"&commodity_type=01"+"&address_id="+address;
+ };
+	
+ orderDetailList=function(id){
+	  window.location.href="${ctx}/mine/orderDetailList?total_id="+id+"&commodity_type=01"+"&order_status="+order_status;
+	}
+ myBabyrefund = function(id){
+	 window.location.href ="${ctx}/mine/myBabyrefund?totalId="+id+"&order_status="+order_status;
+ };
+})
+</script>
+</body>
+</html>

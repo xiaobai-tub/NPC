@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<#include "include/header.html"/>
+<body>
+	<div class="wrap ">
+		<div class="mediumP gray block" style="text-align: center;">
+			<img alt="支付成功" src="${ctx}/resource/images/14360115.png" width="100px">
+			<p>恭喜您，支付成功!</p>
+		</div>
+		<div class="nojoin">
+			<div class="btn_group">
+				<a onclick="continueBuy();return false;"><div class="g2" ><span class="btn btn_red btn_join" >继续购买</span></a></div>
+				<a onclick="myOneBuy();return false;"><div class="g2" ><span class="btn btn_gray btn_qd" >查看夺宝记录</span></a></div>
+			</div>
+		</div>
+	</div>
+	<script type="text/javascript">
+		$(function() {
+		
+			continueBuy= function(){
+					 window.location.href="${ctx}/home/homePage";
+			 } 
+			 myOneBuy= function(){
+			   window.location.href="${ctx}/mine/MyOneBuy?status=&type=1&is_win=";
+			 } 
+		});
+	</script>
+<#include "include/foot.html"/>
+</body>
+</html>

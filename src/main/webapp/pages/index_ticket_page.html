@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html>
+<#include "include/header.html"/>
+<body>
+<div class="page ticket_page">
+<#if shareMsg??>
+<#else>
+<#if puTicket??>
+<#else>
+<div class="top-msg">
+    <div class="avatar" style="background-image: url('${shareUser.head_path!}')"></div>
+    <#if checkpuTicket??>
+    <div class="msg">恭喜你获得<strong>${shareUser.nick_name_d!}</strong>送我的<strong>${checkpuTicket.mortgage_amount!}元</strong>现金券！</div>
+    <#else>
+    <#if userTicket??>
+    <div class="msg">恭喜你获得<strong>${shareUser.nick_name_d!}</strong>送我的<strong>${userTicket.mortgage_amount!}元</strong>现金券！</div>
+    <#else>
+    <div class="msg">恭喜你获得<strong>${shareUser.nick_name_d!}</strong>送我的<strong>${ptr.mortgage_amount!}元</strong>现金券！</div>
+    </#if>
+    </#if>
+    
+  </div>
+</#if>
+</#if>
+
+  <div class="container">
+  <#if shareMsg??>
+  <div class="p_ticket">
+  	<div class="content">
+   		 </div>
+   	<div class="t_mask">${shareMsg!}</div>
+  </div>
+  <#else>
+	  <#if puTicket??>
+	    <#if puTicket.mortgage_amount == 100 >
+	    <div class="p_ticket" style="background-image: url('${ctx}/resource/images/ticket_100.png')">
+	    </div>
+	    </#if>
+	    <#if puTicket.mortgage_amount == 10 >
+	    <div class="p_ticket" style="background-image: url('${ctx}/resource/images/ticket_10.png')">
+	    </div>
+	    </#if>
+	    <#if puTicket.mortgage_amount == 5 >
+	    <div class="p_ticket" style="background-image: url('${ctx}/resource/images/ticket_5.png')">
+	    </div>
+	    </#if>
+	    <#if puTicket.mortgage_amount == 2 >
+	    <div class="p_ticket" style="background-image: url('${ctx}/resource/images/ticket_2.png')">
+	    </div>
+	    </#if>
+	  <#else>
+	   <#if checkpuTicket??>
+	    	<#if checkpuTicket.mortgage_amount == 100 >
+			    <div class="p_ticket" style="background-image: url('${ctx}/resource/images/ticket_100.png')">
+			    </div>
+			    </#if>
+			    <#if checkpuTicket.mortgage_amount == 10 >
+			    <div class="p_ticket" style="background-image: url('${ctx}/resource/images/ticket_10.png')">
+			    </div>
+			    </#if>
+			    <#if checkpuTicket.mortgage_amount == 5 >
+			    <div class="p_ticket" style="background-image: url('${ctx}/resource/images/ticket_5.png')">
+			    </div>
+			    </#if>
+			    <#if checkpuTicket.mortgage_amount == 2 >
+			    <div class="p_ticket" style="background-image: url('${ctx}/resource/images/ticket_2.png')">
+			    </div>
+			    </#if>
+	   <#else>
+		   <#if userTicket??>
+			    <#if userTicket.mortgage_amount == 100 >
+			    <div class="p_ticket" style="background-image: url('${ctx}/resource/images/ticket_100.png')">
+			    </div>
+			    </#if>
+			    <#if userTicket.mortgage_amount == 10 >
+			    <div class="p_ticket" style="background-image: url('${ctx}/resource/images/ticket_10.png')">
+			    </div>
+			    </#if>
+			    <#if userTicket.mortgage_amount == 5 >
+			    <div class="p_ticket" style="background-image: url('${ctx}/resource/images/ticket_5.png')">
+			    </div>
+			    </#if>
+			    <#if userTicket.mortgage_amount == 2 >
+			    <div class="p_ticket" style="background-image: url('${ctx}/resource/images/ticket_2.png')">
+			    </div>
+			    </#if>
+			<#else>
+			    <#if ptr.mortgage_amount == 100 >
+			    <div class="p_ticket" style="background-image: url('${ctx}/resource/images/ticket_100.png')">
+			    </div>
+			    </#if>
+			    <#if ptr.mortgage_amount == 10 >
+			    <div class="p_ticket" style="background-image: url('${ctx}/resource/images/ticket_10.png')">
+			    </div>
+			    </#if>
+			    <#if ptr.mortgage_amount == 5 >
+			    <div class="p_ticket" style="background-image: url('${ctx}/resource/images/ticket_5.png')">
+			    </div>
+			    </#if>
+			    <#if ptr.mortgage_amount == 2 >
+			    <div class="p_ticket" style="background-image: url('${ctx}/resource/images/ticket_2.png')">
+			    </div>
+			    </#if>
+		    </#if>
+	   </#if>
+	  </#if>
+  </#if>
+  <#if shareMsg??>
+  <#else>
+  	<#if puTicket??>
+  		<p class="tip">
+		      红包已放至账户<span class="account">${shareUser.nick_name_d!}</span><!-- <a href="">修改&gt;</a>-->
+		      <br>
+		      登录异兽商城即可使用账户
+	    </p>
+  	<#else>
+  	   <p class="tip">
+		      红包已放至账户<span class="account">${user.nick_name_d!}</span><!-- <a href="">修改&gt;</a>-->
+		      <br>
+		      登录异兽商城即可使用账户
+	    </p>
+  	</#if>
+  </#if>
+  <#if shareMsg??>
+  <#else>
+  <button class="t_btn" onclick="forward();"><span class="content">立即使用</span></button>
+    <div class="rules">
+      <h2>活动细则</h2>
+      <ol>
+        <li>分享本页面至朋友圈，前10位好友可免费领取现金券。</li>
+        <br>
+        <li>发放至微信号的现金券需在异兽微商城才可以使用。不兑现，不找零。</li>
+        <br>
+        <li>使用现金券时的微信号需为领取现金券的微信号。</li>
+        <br>
+        <li>现金券仅限在线支付时使用，每张订单仅限使用一张现金券，单笔订单不可多张券叠加使用。</li>
+        <br>
+        <li>闽南异兽志保留法律范围内允许的对活动的解释权。</li>
+      </ol>
+    </div>
+  </#if>
+  </div>
+</div>
+</body>
+<script type="text/javascript">
+<#if shareMsg?? >
+$(".t_mask").show() //显示遮罩
+</#if>
+forward=function(){
+	  window.location.href="${ctx}/home/homePage";
+	}
+</script>
+</html>

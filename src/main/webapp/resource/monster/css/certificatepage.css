@@ -1,0 +1,222 @@
+/* 
+* @Author: anchen
+* @Date:   2016-11-10 17:03:31
+* @Last Modified by:   anchen
+* @Last Modified time: 2016-11-10 17:37:54
+*/
+body {
+    width: 750px;
+}
+
+.wrap {
+	overflow: hidden;
+    position: relative;
+    width: 750px;
+    height: 1300px;
+    background: url('../img/bacpic.png');
+}
+@media screen and (min-width: 768px) {
+.wrap {
+  width: 750px;
+  margin: 0 auto; } }
+
+.title {
+    position: absolute;
+    top: 56px;
+    left: 70px;
+    width: 609px;
+    height: 180px;
+    background: url('../img/certificatetit.png');
+    z-index: 1;
+}
+.info {
+    position: absolute;
+    top: 280px;
+    left: 90px;
+    width: 566px;
+    height: 363px;
+}
+.info div {
+    width: 516px;
+    height: 32px;
+    border-radius: 10px;
+    padding: 25px;
+    margin-bottom: 40px;
+    background-color: #fff;
+} 
+.info div span {
+    float: left;
+    width: 110px;
+    height: 100%;
+    line-height: 32px;
+    font-family: "黑体";
+    font-weight: bold;
+    font-size: 30px;
+    color: black;
+}
+.info div input {
+    float: left;
+    width: 400px;
+    height: 100%;
+    font-size: 24px;
+    line-height: 32px;
+    border: 0;
+    outline: medium;
+    background-color: #fff;
+}
+.info .pickedgift span {
+    width: 150px;
+    height: 100%;
+}
+.info .pickedgift input {
+    width: 350px;
+    height: 100%;
+}
+.pic-info {
+    position: absolute;
+    top: 665px;
+    left: 90px;
+    width: 570px;
+    height: 335px;
+    /*background-color: #fff;*/
+}
+.giftpic {
+    float: left;
+    width: 266px;
+    height: 100%;
+    /*background-color: skyblue;*/
+}
+.certifipic {
+	position: relative;
+    float: right;
+    width: 266px;
+    height: 100%;
+    /*background: orange;*/
+}
+.giftpic h2, .certifipic h2 {
+    width: 100%;
+    height: 31px;
+    margin-bottom: 7px;
+    font-size: 24px;
+    color: #fff;
+}
+.giftpic div, .certifipic div {
+    width: 256px;
+    height: 285px;
+    padding: 5px;
+    border-radius: 10px;
+    background-color: #fff;
+}
+.giftpic div img, 
+.certifipic div img {
+    display: block;
+    width: 258px;
+    height: 287px;
+    border-radius: 10px;
+}
+.tipmess {
+	position: absolute;
+	bottom: 185px;
+	left: 100px;
+	width: 256px;
+	height: 100px;
+}
+.tipmess h2 {
+	width: 100%;
+	font-size: 21px;
+	color: #fff;
+}
+.btn {
+    position: absolute;
+    bottom: 150px;
+    left: 198px;
+    width: 355px;
+    height: 85px;
+    background: url("../img/blankbtn.png");
+    font-size: 40px;
+    text-align: center;
+    line-height: 85px;
+    color: #fff;
+}
+.stamp1 {
+    display: block;
+    position: absolute;
+    top: 60px;
+    left: 0;
+    width: 350px;
+    height: 300px;
+    background: url('../img/stamper.png') no-repeat;
+    background-size: cover;
+    opacity: 0;
+}
+.stamper {
+    opacity: 1;
+    -webkit-animation: 0.5s stamp ease forwards;
+}
+@-webkit-keyframes stamp {
+    0% {
+        opacity: 0;
+        -webkit-transform: scale(3); 
+        transform: scale(3); 
+    }
+    100% {
+        opacity: 1;
+        -webkit-transform: scale(1);
+        transform: scale(1);
+    }
+}
+.vipwindow {
+	display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: url("../img/vipwindow.png") no-repeat;
+    z-index: 10;
+}
+.close {
+    position: absolute;
+    top: 120px;
+    right: 70px;
+    width: 42px;
+    height: 42px;
+    background: url("../img/close.png") no-repeat;
+}
+.viptext {
+    position: absolute;
+    top: 187px;
+    right: 110px;
+    width: 517px;
+    height: 155px;
+    font-size: 40px;
+    text-align: center;
+    color: #fff;
+}
+.codepic {
+    position: absolute;
+    top: -50px;
+    right: 160px;
+    width: 439px;
+    height: 903px;
+}
+.codepic img {
+    display: block;
+    width: 100%;
+    height: 100%;
+}
+@media screen and (min-width: 768px) {
+    .wrap {
+      width: 750px;
+      margin: 0 auto;
+    } 
+    .vipwindow {
+      width: 750px;
+      left: 50% !important;
+      transform: translateX(-375px);
+    }
+}
+/*.btn h2 {
+    width: 100%;
+    height: 100%;
+}*/

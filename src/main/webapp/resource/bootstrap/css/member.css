@@ -1,0 +1,8 @@
+body,form,p,ul{margin: 0;padding: 0;}
+ul{list-style: none;}
+.content{margin: 0 auto;}
+.img100 { max-width: 100%;}
+label.error{color: red;}
+.pre-scrollable{max-height:40rem;overflow-y:scroll}
+.list-group-item-text{line-height: 20px;}
+

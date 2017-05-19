@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+<#include "include/header.html"/>
+<body>
+<div class="comments_div">
+		<strong >退款理由</strong>
+	</div>
+	<div class="comments_textarea">
+						<textarea id="babyComment" name="babyComment" rows="5" placeholder="请输入您的退款理由........" ></textarea>
+    </div>
+<input type="button" class="btn btn_red btn_buy" onclick="submit();" value="提交理由">
+<script type="text/javascript">
+$(function(){
+ $(".addr_list .item").swipe({
+		swipe:function(event, direction, distance, duration, fingerCount) {
+			if(direction == "left"){
+				//alert("left")
+				$(this).addClass("on")
+			}else if(direction == "right"){
+				//alert("right")
+				$(this).removeClass("on")
+			}
+		}
+	});
+	//提交退款理由
+	submit = function(){
+		 var commodity_refund = $("#babyComment").val();
+		 if(commodity_refund == "" || commodity_refund==null){
+		 dialog('#ok',3000,"请输入您的退款理由");
+		 return;
+		 }
+		 $.post("${ctx}/mine/submitCommodityRefund",{
+			 id:"${totalId!}",
+			 commodity_refund:commodity_refund,
+			 order_status:"${order_status!}"
+				},function(json){
+					if(json.code==0){
+						window.location.href="${ctx}/mine/orderDetails?order_status="+"${order_status!}"+"&type="+"1";
+					}else{
+					dialog('#ok',3000,json.msg);
+					}
+					
+			},'json'); 
+		
+	};
+})
+</script>
+</body>
+</html>

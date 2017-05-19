@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html>
+<#include "include/header.html"/>
+<body>
+<div class="page">
+	<div class="content">
+	<form action="#" id="addressform">
+		<div class="form" >
+			<div class="item2">
+				<#if purchase?? >
+				<div class="fr ADD"><input type="text" class="required" placeholder="收货人姓名" id="receiver_name" name="receiver_name" value="${purchase.receiver_name!}"></div>
+			    <#else>
+			    <div class="fr ADD"><input type="text" class="required" placeholder="收货人姓名" id="receiver_name"  name="receiver_name" ></div>
+			    </#if>
+			</div>
+			<div class="item2">
+				<#if purchase?? >
+				<div class="fr ADD"><input type="tel" class="required" placeholder="11位手机号码" id="telephone" name="telephone" value="${purchase.telephone!}"></div>
+				<#else>
+				<div class="fr ADD"><input type="tel" class="required" placeholder="11位手机号码" id="telephone" name="telephone"></div>
+				</#if>
+				
+			</div>
+			<!-- <div class="item2">
+				<div class="fr ADD">
+				<select id="province_code" name="province_code" class="required" style="width:32%;">
+				<option value="">省</option>
+				<#list pro as proAddr>
+				<option value="${proAddr.area_code}">${proAddr.area_name!}</option>
+				</#list>
+				</select> 
+				<select id="city_code" name="city_code" class="required" style="width:32%;">
+				<option value="shi">市</option> 
+				<#if city??>
+				<#list city as cityAddr>
+				<option value="${cityAddr.area_code}">${cityAddr.area_name!}</option>
+				</#list> 
+				</#if>
+				</select> 
+				<select id="county_code" name="county_code" class="required" style="width:32%;">
+				<option value="qu">区</option> 
+				<#if country??>
+				<#list country as countyAddr>
+				<option value="${countyAddr.area_code}">${countyAddr.area_name!}</option>
+				</#list>
+				</#if>
+				</select>
+				</div>
+			</div> -->
+			<div class="item2">
+				<#if purchase?? >
+				<div class="fr ADD"><input type="text" class="required" id="address" name="address" placeholder="详细省市区街道门牌地址" value="${purchase.geography_location!}"></div>
+				<#else>
+				<div class="fr ADD"><input type="text" class="required" id="address" name="address" placeholder="详细省市区街道门牌地址" ></div>
+				</#if>
+			</div>
+			 <div class="item2">
+				<#if purchase?? >
+				<div class="fr ADD"><input type="tel" class="required" id="postCode" name="postCode" placeholder="邮政编码" value="${purchase.zip_code!}"></div>
+				<#else>
+				<div class="fr ADD"><input type="tel" class="required" id="postCode" name="postCode" placeholder="邮政编码"></div>
+				</#if>
+			</div> 
+			<div class="ctr">
+				<#if purchase?? >
+			<#if purchase.is_default == '1' >
+			<div class="checkbox">
+					<input type="checkbox" checked name="r" id="r3" />
+					<label for="r3"></label>
+				</div>
+				
+				<#else>
+				<div class="checkbox">
+					<input type="checkbox" name="r" id="r3" />
+					<label for="r3"></label>
+				</div>
+				</#if>
+				<#else>
+				<div class="checkbox">
+					<input type="checkbox" name="r" id="r3" />
+					<label for="r3"></label>
+				</div>
+				</#if>
+				<div class="checktxt">设置为默认地址</div>
+				<input type="submit" value="确认" class="btn btn_red btn_submit" onClick="addAdress();return false;">
+			</div>
+			</form>
+		</div>
+		
+	</div>
+</div>
+
+	<script type="text/javascript">
+		$(function() {
+$("#a_my").attr("href","${ctx}/mine/MineInformation");
+ $("#a_car").attr("href","${ctx}/car/carList");
+ $("#a_shop").attr("href","${ctx}/home/homePage");
+			var id="";
+			<#if purchase??>
+			id="${purchase.id!}";
+			/* $("#province_code").val("${purchase.province_code!}");
+			$("#city_code").val("${purchase.city_code!}");
+			$("#county_code").val("${purchase.county_code!}"); */
+		    </#if>
+			 //$("#addressform").validate();
+			addAdress=function(){
+				/* if (!$("#addressform").valid()) {
+					return;
+				} */
+				if ($("#receiver_name").val() == "" || $("#receiver_name").val() == null || $("#receiver_name").val() == undefined) {
+				    dialog('#ok',3000,"收货人不能为空");
+					return;
+				}
+				if ($("#telephone").val() == "" || $("#telephone").val() == null || $("#telephone").val() == undefined) {
+				    dialog('#ok',3000,"手机号码不能为空");
+					return;
+				}
+				/* if ($("#province_code").val() == "" || $("#province_code").val() == null || $("#province_code").val() == undefined) {
+				    dialog('#ok',3000,"地区不能为空");
+					return;
+				}
+				if ($("#city_code").val() == "" || $("#city_code").val() == null || $("#city_code").val() == undefined) {
+				    dialog('#ok',3000,"地区不能为空");
+					return;
+				}
+				if ($("#county_code").val() == "" || $("#county_code").val() == null || $("#county_code").val() == undefined) {
+				    dialog('#ok',3000,"地区不能为空");
+					return;
+				} */
+				if ($("#address").val() == "" || $("#address").val() == null || $("#address").val() == undefined) {
+				    dialog('#ok',3000,"详细地址不能为空");
+					return;
+				}
+				/* if ($("#postCode").val() == "" || $("#postCode").val() == null || $("#postCode").val() == undefined) {
+				    dialog('#ok',3000,"邮政编码不能为空");
+					return;
+				} */
+				var formObj = $("#addressform").serializeObject();
+				var is_default=$("input[type='checkbox']").is(':checked');
+				$
+				.post(
+						"${ctx}/mine/addAddress?address_id="+id+"&version_id="+"${version_id!}"+"&countNum="+"${countNum!}"+"&price="+"${price!}"+"&type="+"${type!}"+"&id="+"${id!}"+"&is_order="+"${is_order!}"+"&buy_id="+"${buy_ids!}"+"&commodity_type="+"${commodity_type!}"+"&total_id="+"${buy_ids!}"+"&slotId="+"${slotId!}"+"&buyId="+"${buyId!}",
+						{
+						address:$("#address").val(),
+						receiver_name:$("#receiver_name").val(),
+						telephone:$("#telephone").val(),
+						/* province_code:$("#province_code").val(),
+						city_code:$("#city_code").val(),
+						county_code:$("#county_code").val() */
+						postCode:$("#postCode").val(), 
+						r:is_default
+						
+						},
+						function(json) {
+							if (json.code == "0") {
+							 var forward_type="${forward_type!}";
+								window.location.href = "${ctx}/mine/getAddr?version_id="+"${version_id!}"+"&countNum="+"${countNum!}"+"&price="+"${price!}"+"&type="+"${type!}"+"&id="+"${id!}"+"&is_order="+"${is_order!}"+"&forward_type="+forward_type+"&buy_id="+"${buy_ids!}"+"&commodity_type="+"${commodity_type!}"+"&total_id="+"${buy_ids!}"+"&slotId="+"${slotId!}"+"&buyId="+"${buyId!}";
+							} else {
+								dialog('#ok',3000,json.msg);
+							}
+
+						}, 'json');
+	}	
+			
+
+			//获取市下拉框数据
+			$("#province_code").on('change',function(){
+				$("#city_code").val("市");
+				$("#county_code").val("县");
+				$("#city_code").html('<option value="">市</option>');
+				$("#county_code").html('<option value="">县</option>');
+				if($(this).val().length > 1){
+					$.post("${ctx}/mine/findAreas",{
+						area_type:2,
+						area_parent:$(this).val()
+						},function(json){
+							for(var i in json){
+								$("#city_code").append('<option value="'+json[i].area_code+'">'+json[i].area_name+'</option>');
+							}
+					},'json');
+				}
+			}); 
+			//获取县下拉框数据
+			$("#city_code").on('change',function(){
+				$("#county_code").val("县");
+				$("#county_code").html('<option value="">县</option>');
+				if($(this).val().length > 1){
+					$.post("${ctx}/mine/findAreas",{
+						area_type:3,
+						area_parent:$(this).val()
+						},function(json){
+							for(var i in json){
+								$("#county_code").append('<option value="'+json[i].area_code+'">'+json[i].area_name+'</option>');
+							}
+					},'json');
+				}
+			});
+			
+		})
+	</script>
+<#include "include/foot.html"/>
+</body>
+</html>

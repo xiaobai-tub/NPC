@@ -1,0 +1,388 @@
+<!DOCTYPE html>
+<html>
+<#include "include/header.html"/>
+<body>
+<div class="page">
+	<div class="content m">
+		<div class="swiper-container swiper">
+				<div class="swiper-wrapper" id="swiperWrapper">
+					<#list versionExtList as a> <#if a.ext_url??>
+					<div class="swiper-slide">
+						<img src="${server_uri!}${a.ext_url!}" class="pic">
+					</div>
+					<#else>
+					<div class="swiper-slide">
+						<img src="" class="pic">
+					</div>
+					</#if> </#list>
+				</div>
+				<div class="num-pagination">
+					<span id="active-num"></span>/<span id="all-num"></span>
+				</div>
+			</div>
+		
+		<div class="product_brief">
+			<div class="title">${commodity_name}</div>
+			<div class="issue">期号：${time_slot}</div>
+			
+			<#if (onePurchaseList?size==0) >
+			<!--未参与-->
+			<div class="nojoin">
+				<div class="bar"><span style="width:${purchase.per!}%"></span></div>
+				<div class="remainder">剩余<span>${purchase.surplus_count}</span></div>
+				<div class="count">总需${purchase.total_count}人次</div>
+				<div class="btn btn_gray btn_nojoin">您还没有参与本次夺宝</div>
+			</div>
+			<#else>
+			<!--已参与-->
+			<div class="havejoin" >
+			    <div class="bar"><span style="width:${purchase.per!}%"></span></div>
+				<div class="remainder">剩余<span>${purchase.surplus_count}</span></div>
+				<div class="count">总需${purchase.total_count}人次</div>
+				<div class="u">您参与了：<span class="red">${onePurchaseList?size}</span>次
+				<br>夺宝号码：<div class="warp">${lunckNum.lucky_num!}</div>
+				</div>
+				<#if slot.status == '01' >
+				<div class="btn btn_red btn_djs" ><label>进行中</label></div>
+ 			</#if>
+ 			<#if slot.status == '02' >
+ 			
+				<div class="btn btn_red btn_djs" ><label>揭晓倒计时：<span id="span_hour">00</span>:<span id="span_minute">00</span>:<span id="span_second">00</span></label><a href="javascript:void(0);" onclick="forwardFormula('${slotId!}');" class="more">查看计算详情</a></div>
+ 			</#if>
+ 			<#if slot.status == '03' >
+ 			<div class="btn btn_red btn_djs" ><label>中奖号码:${slot.lucky_num!}</label> <a href="javascript:void(0);" onclick="forwardFormula('${slotId!}');" class="more">查看计算详情</a></div>
+ 			</#if>
+ 			</div>
+            </#if>
+		</div>
+		<!--公布结果-->
+		  <#if slot.status == '03' >
+			<div class="product_mod">
+			  <h3 class="headline t">中奖结果</h3>
+			  <div class="detail c" style="display:none;">
+				<div class="publish">
+					<div class="winner">
+						<img src="${winner.head_path!}" class="face">
+						<div class="desc" id="desc">
+						</div>
+					</div>
+				</div>
+				</div>
+			</div>
+			</#if>
+		<#if slot.status == '01' >
+		<div class="product_mod">
+				<h3 class="headline">款式</h3>
+				<div class="product_attr">
+					<dl>
+						<dd>
+						<div class="style" id="divVersion">
+								<#list commodityVersionList as b > 
+								<#if b.version_stock == 0 >
+								   <span name="${b.id!}">${b.version_type!}</span>
+									<#else>
+									<span name="${b.id!}"
+									onclick="changPic('${b.id!}',this);">${b.version_type!}</span>
+									</#if>
+								</#list>
+							</div>
+							<!-- <div class="style" id="divVersion">
+								<#list commodityVersionList as b > 
+									<span name="${b.id!}"
+									onclick="changPic('${b.id!}',this);">${b.version_type!}</span>
+								</#list>
+							</div> -->
+						</dd>
+					</dl>
+				</div>
+			</div>
+			</#if>
+		<div class="product_mod">
+			<h3 class="headline t">图文详情<i>（建议在wifi下查看）</i></h3>
+			<div class="detail c" style="display:none;">
+				<div class="text">
+					${commodity_desc}
+				</div>
+			</div>			
+		</div>
+		
+		<div class="product_mod">
+			<h3 class="headline t">所有参与者记录<i>（自${begin_date!?string("yyyy年MM月dd日")!}${begin_date!?string("HH:mm")!}开始）</i></h3>
+			<div class="join_list c" style="display:none;" id="joinPeople">
+				<#if partakeUser?? >
+				<#else>
+				<div class="item">
+					没有记录
+				</div>
+				</#if>
+			</div>			
+		</div>
+		
+	</div>
+    <div class="top">
+		<a href="javascript:scroll(0,0)"><img src="${ctx}/resource/images/icon_zd.png"></a>
+	</div>
+	<div class="footer">
+	<div class="product_attr" style="display:none;" id="divBuy">
+				<img src="${ctx}/resource/images/btn_close.png" class="btn_close">
+				<div class="price">￥1</div>
+				<div class="title">${commodity_title!}</div>
+				<dl>
+					<dt>数量：</dt>
+					<dd>
+						<div class="style">
+							<i class="btn_count min">-</i><input type="text" id="num"
+								value="1" class="ipt"><i class="btn_count add">+</i>
+						</div>
+					</dd>
+				</dl>
+				<a href="javascript:void(0);" class="btn btn_red btn_next"
+					onclick="forwardOneOrderConfirm('02')">下一步</a>
+			</div>
+		<!--未参与-->
+		<#if slot.status == '01' >
+		<div class="nojoin">
+			<div class="btn_group">
+			    <div class="g2"><img src="${ctx}/resource/images/icon_index.jpg" onclick="forwardIndex();" class="btn_group_img" /></div>
+				<div class="g2" ><span class="btn btn_red btn_join" >立即参与</span></div>
+			</div>
+		</div>
+		<#else>
+		<div class="nojoin">
+			<div class="btn_group">
+			    <div class="g2"><img src="${ctx}/resource/images/icon_index.jpg" onclick="forwardIndex();" class="btn_group_img" /></div>
+			</div>
+		</div>
+			</#if>	
+		<!--已参与-->
+		<div class="havejoin" style="display:none;">
+			<div class="btn_group">
+				<div class="desc">最新一期正在火热进行中</div>
+				<a href="#" class="btn btn_red btn_go">立即前往</a>
+			</div>
+		</div>
+	</div>
+	
+</div>
+<!--查看号码-->
+<div class="dialog" id="num">
+	<div class="dialog_content">
+		<div class="alert">
+			<div class="desc">
+				燃烧吧少年—燃烧杯<br>
+				参与<span class="red">1</span>人次，夺宝号码：<br>
+				100000312
+			</div>
+			<div class="ctr">
+				<div class="btn btn_white btn_mini" onClick="dialogClose()">确定</div>
+			</div>
+		</div>	
+	</div>
+</div>
+
+
+</body>
+<script>
+var date="${slot.lottery_second!}",open_minute=0,open_second=0,closeshowtime;
+
+ $(function(){
+ if(parseInt(date)>0){
+		open_minute=parseInt(date/60)+1;
+		open_second= parseInt(date%60);
+		 openshowtime();
+		closeshowtime=setInterval(function () {
+                    openshowtime();
+                }, 1000);
+	}
+<#if partakeUser?? >
+var htmlStr="";
+<#list partakeUser as p>
+     htmlStr+="<div class='item'>";
+	 htmlStr+="<img src='${p.head_path!}' class='face'>";
+	 var nick_name="${p.nick_name!}";
+	 nick_name=decodeURI(nick_name);
+	 htmlStr+="<div class='name' >"+nick_name+"</div>";	
+	 htmlStr+="<div class='count'>参与了${p.countNum!}人次  ${p.buy_date?string('yyyy-MM-dd HH:mm:ss')!}</div>";
+	 htmlStr+="</div>";			
+	</#list >
+$("#joinPeople").html(htmlStr);	
+</#if>
+<#if winner?? >
+var htmStr="";
+var name="${winner.nick_name!}";
+name=decodeURI(name);
+htmStr+="获奖者：<span class='red'>"+name+"</span><br>";
+htmStr+="参与次数：${winner.countNum!}人次 <br>";
+htmStr+="揭晓时间： ${winner.lottery_time!}<br>";
+$("#desc").html(htmStr);	
+</#if>
+	$(".product_mod .t").click(function(){
+		$(this).toggleClass(".headline t2")
+		$(this).siblings(".c").toggle();
+	})
+	//滑动图片
+		var swiperH = new Swiper('.swiper', {
+			onInit: function(swiper){
+				document.getElementById("active-num").innerHTML=swiper.activeIndex+1;
+				document.getElementById("all-num").innerHTML=swiper.slides.length;
+			},
+			onSlideChangeEnd: function(swiper){
+				document.getElementById("active-num").innerHTML=swiper.activeIndex+1;
+			}
+		});
+	
+	//切换轮播图片
+		changPic = function(version_id,obj) {
+		$("#divVersion span").attr("class","");
+		$(obj).attr("class","on");
+		
+		$.post("${ctx}/one/changeVersionPic",{
+            id:"${purchase.commodity_id!}",
+			version_id:version_id
+		},function(json){
+		var list=json.versionExtList;
+		var server_uri=json.server_uri;
+		var htm="";
+		for(var i in list){
+		htm+="<div class='swiper-slide'><img src='"+server_uri+""+list[i].ext_url+"' class='pic'></div>";
+		}
+		
+		document.getElementById("all-num").innerHTML=list.length;
+		document.getElementById("active-num").innerHTML=1;
+	//$("#swiperWrapper").html(htm);
+		$(".swiper .pic").height($(".page").width()*450/640);
+		swiperH.removeAllSlides();
+		swiperH.appendSlide(htm);
+		swiperH.activeIndex=0;
+		},'json');
+		}
+		
+		$("#divVersion span").each(function(index){
+		if(index==0){
+			$(this).attr("class","on");
+		}
+	});
+		
+		//滑动图片尺寸
+		$(".swiper .pic").height($(".page").width()*450/640)	
+
+	//加减计算
+	var tabEnterTime = 0;
+$(".add").on("touchstart mousedown", function(e) {
+  e.stopPropagation()
+  e.preventDefault()
+  tabEnterTime = Date.now();
+}).on("touchend mouseup", function() {
+  if (Date.now() - tabEnterTime < 1000) {
+    var t=$(this).parent().find('input[class*=ipt]'); 
+    t.val(parseInt(t.val())+1) 
+  }
+})
+
+$(".min").on("touchstart mousedown", function(e) {
+  e.stopPropagation()
+  e.preventDefault()
+  tabEnterTime = Date.now();
+}).on("touchend mouseup", function() {
+  if (Date.now() - tabEnterTime < 1000) {
+    var t=$(this).parent().find('input[class*=ipt]'); 
+    t.val(parseInt(t.val())-1) 
+    if(parseInt(t.val())<0){ 
+      t.val(0); 
+    } 
+  }
+})
+
+	//购买弹出框
+	$(".btn_join").click(function(){
+		$("#divBuy").show();
+		$(".footer .btn_group").hide();
+		$(".mask").show();
+		$(".mask").css({"z-index":"888"});
+		buy_type="02";
+	})
+	$(".product_attr .btn_close").click(function(){
+		$("#divBuy").hide();
+		$(".footer .btn_group").show();
+		$(".mask").hide();
+		$(".mask").css({"z-index":"1000"})
+	})
+	$(".mask").click(function(){
+		$("#divBuy").hide();
+		$(".footer .btn_group").show();
+		$(".mask").hide();
+		$(".mask").css({"z-index":"1000"})
+	})
+	forwardIndex = function(){
+				window.location.href="${ctx}/home/homePage";
+	}
+	forwardOneOrderConfirm = function(type) {
+		var version_id="";
+	    if($("#divVersion span.on").length > 0){
+		version_id=$("#divVersion span.on")[0].attributes[0].nodeValue;
+		}
+		if(version_id=='' || version_id==undefined || version_id==null){
+		   dialog('#ok',3000,"请选择一种商品款式");
+		   return;
+           }
+		var countNum=$("#num").val();
+		if(type == "02"){
+			window.location.href="${ctx}/pay/forwardConfirm?id=${id}&price=1&version_id="+version_id+"&countNum="+countNum+"&type="+type+"&commodity_type=02&time_slot=${time_slot}&orderType=02&slotId=${slotId}";
+		}else{
+			 var url = "${ctx}/pay/forwardConfirm?id=${id}&version_id="+version_id+"&countNum="+countNum+"&price=1&type="+type+"&commodity_type=02&time_slot=${time_slot}&slotId=${slotId}";
+			$.post(url,function(json){
+				if(json.code=="0"){
+					  window.location.href="${ctx}/car/carList?commodity_type=02";
+					}else{
+					dialog('#ok',3000,json.msg);
+					}
+			},'json');
+		}
+	}
+	forwardFormula=function(id){
+	  window.location.href="${ctx}/one/getOnePurchaseFormula?id="+id;
+	}
+	
+	 
+ });
+ function openshowtime() {		
+		if (open_minute.toString().length == 1) {
+            $("#span_minute").html("0" + open_minute);
+        }
+        else {
+            $("#span_minute").html(open_minute);
+        }
+		
+        if (open_second.toString().length == 1) {
+            $("#span_second").html("0" + open_second);
+        }
+        else {
+            $("#span_second").html(open_second);
+        }
+        open_second = open_second - 1;
+        if (open_minute==0 && open_second <= 0) {
+        		 clearInterval(closeshowtime);
+			window.location.href="${ctx}/one/getOnePurchase?id=${slotId!}";
+		}
+		else if(open_second<=0){
+			 if (open_minute == 0) {
+                open_second = 0;
+            }
+            else {
+                open_minute = open_minute - 1;
+                open_second = 59;
+            }
+		}
+}
+$(window).scroll(function(){
+	var scrollTop =$(this).scrollTop();//滚动高度
+	if(scrollTop>=200){//到达底部加载内容
+	    $(".top").css("display","block");
+	}
+	else{
+		$(".top").css("display","none");
+	}
+});
+
+</script>
+</html>

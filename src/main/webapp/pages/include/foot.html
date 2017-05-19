@@ -1,0 +1,25 @@
+<div class="footer">
+		<div class="nav">
+		    <a href="javascript:dialog('#dialog_browser')" class="item1"><i></i></a>
+			<a href="${ctx}/home/homePage" class="item on" id="a_shop"><i></i>米力社</a>
+			<a href="${ctx}/car/carList" class="item" id="a_car"><i></i>购物车</a>
+			<a href="${ctx}/mine/MineInformation" class="item" id="a_my"><i></i>个人</a>
+		</div>
+	</div>
+<script type="text/javascript">
+$(function(){
+	var location=window.location.href;
+	$("div.footer div.nav a").removeClass("on");
+	if(location.indexOf("/home/")!=-1){
+		$("div.footer div.nav a").eq(1).addClass("item on");
+		
+	}
+	if(location.indexOf("/mine/")!=-1){
+		$("div.footer div.nav a").eq(3).addClass("item on");
+	}
+		if(location.indexOf("/car/")!=-1){
+		$("div.footer div.nav a").eq(2).addClass("item on");
+	}
+	
+});
+</script>

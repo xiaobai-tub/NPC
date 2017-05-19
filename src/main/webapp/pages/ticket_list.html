@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html>
+<#include "include/header.html"/>
+<body>
+<div class="page">
+  <nav class="t_nav">
+    <div class="nav_item"><a href="#" class="active" data-target="unused">待使用</a></div> <!-- 选中的加class: active -->
+    <div class="nav_item"><a href="#" data-target="used">已使用</a></div>
+  </nav>
+  <div class="t_main unused">
+    <ul id="ticket">
+    <#list ptrList as p>	
+      <li class="t_detail">
+        <div class="header">
+          <div class="content">
+            <strong>${p.mortgage_amount!}</strong>
+            <div class="info">
+              <h2>满${p.minimum_threshold_amount!}立减${p.mortgage_amount!}元</h2>
+              <h3>有效期：${p.df_begin_date!}-${p.df_end_date!}</h3>
+            </div>
+          </div>
+        </div>
+        
+        <div class="body">
+          <h3>使用说明：</h3>
+          <p>
+          1.使用优惠时的下单账号需与领优惠券时的账号一致；<br>
+      2.发放至账户的优惠券需在 异兽志商城内，登陆授权才可使用；<br>
+      3.发放至异兽商城账户的红包登录后即可使用；<br>
+      4.优惠券仅限在线支付时使用，每张订单仅限使用一张红包，红包不找零；<br>
+      5.闽南异兽志保留法律范围内允许的对活动的解释权。
+          </p>
+          <!--  <#if p.get_type=='04'>
+          <p>
+          1.使用优惠时的下单账号需与领优惠券时的账号一致；<br>
+      2.发放至账户的优惠券需在 异兽志商城内，登陆授权才可使用；<br>
+      3.发放至异兽商城账户的红包登录后即可使用；<br>
+      4.优惠券仅限在线支付时使用，每张订单仅限使用一张红包，红包不找零；<br>
+      5.闽南异兽志保留法律范围内允许的对活动的解释权。
+          </p>
+          <#else>
+          <p>
+            1.本券为全场满减券，下单可自动扣减；<br>
+2.每张订单只能使用一张卡券，且不得与其他优惠方式同时使用；<br>
+3.本券不得兑换现金不设找零；<br>
+4.取消订单，卡券失效不再退回账户。
+          </p>
+          </#if>
+          -->
+        </div>
+      </li>
+    </#list>
+    <#if pageNumber lt totalPage>
+			<li id="pageNum1" style="text-align: center;"><div onclick="nextPage1(${pageNumber}); return false;"><span class="more">更多<span class="arrow1"></span><span class="arrow2"></span></span></div></li>
+	</#if>
+    </ul>
+  </div>
+
+  <div class="t_main used" style="display: none;">
+    <ul id="isticket">
+<#list isptrList as isp>	
+      <li class="t_detail">
+        <div class="header">
+          <div class="content">
+            <strong>${isp.mortgage_amount!}</strong>
+            <div class="info">
+              <h2>满${isp.minimum_threshold_amount!}立减${isp.mortgage_amount!}元</h2>
+              <h3>有效期：${isp.df_begin_date!}-${isp.df_end_date!}</h3>
+            </div>
+          </div>
+        </div>
+        <div class="body">
+          <h3>使用说明：</h3>
+          <p>
+          1.使用优惠时的下单账号需与领优惠券时的账号一致；<br>
+      2.发放至账户的优惠券需在 异兽志商城内，登陆授权才可使用；<br>
+      3.发放至异兽商城账户的红包登录后即可使用；<br>
+      4.优惠券仅限在线支付时使用，每张订单仅限使用一张红包，红包不找零；<br>
+      5.闽南异兽志保留法律范围内允许的对活动的解释权。
+          </p>
+        <!-- <#if isp.get_type=='04'>
+          <p>
+          1.使用优惠时的下单账号需与领优惠券时的账号一致；<br>
+      2.发放至账户的优惠券需在 异兽志商城内，登陆授权才可使用；<br>
+      3.发放至异兽商城账户的红包登录后即可使用；<br>
+      4.优惠券仅限在线支付时使用，每张订单仅限使用一张红包，红包不找零；<br>
+      5.闽南异兽志保留法律范围内允许的对活动的解释权。
+          </p>
+          <#else>
+          <p>
+            1.本券为全场满减券，下单可自动扣减；<br>
+2.每张订单只能使用一张卡券，且不得与其他优惠方式同时使用；<br>
+3.本券不得兑换现金不设找零；<br>
+4.取消订单，卡券失效不再退回账户。
+          </p>
+          </#if>--> 
+        </div>
+      </li>
+    </#list>
+    <#if ispageNumber lt istotalPage>
+			<li id="pageNum2" style="text-align: center;"><div onclick="nextPage2(${ispageNumber}); return false;"><span class="more">更多<span class="arrow1"></span><span class="arrow2"></span></span></div></li>
+	</#if>
+    </ul>
+  </div>
+</div>
+
+<script type="text/javascript">
+  $(function() {
+    $(".nav_item a").on("click", function(evt) {
+      evt.preventDefault();
+      $(".nav_item a").removeClass("active");
+      $(this).addClass("active");
+      $(".t_main").hide();
+      $(".t_main." + $(this).data("target")).show();
+    })
+   
+  })
+  nextPage1=function(pnum){
+    	$("#pageNum1").remove();
+    	$.post("${ctx}/mine/ticketPage",{
+    		 page:pnum+1
+    			},function(json){
+    				var htm="";
+    				var list=json.list;
+    				for(var i in list){
+    				        htm+="<li class='t_detail'>";
+    						htm+="<div class='header'>";
+    						htm+="<div class='content'>";
+    						htm+="<strong>"+list[i].mortgage_amount+"</strong>";
+    						htm+="<div class='info'>";
+    						htm+="<h2>满"+list[i].minimum_threshold_amount+"立减"+list[i].mortgage_amount+"元</h2>";
+    						htm+="<h3>有效期:"+list[i].df_begin_date+"-"+list[i].df_end_date+"</h3>";
+    						htm+="</div></div></div>";
+    						htm+="<div class='body'>";
+    						htm+="<h3>使用说明：</h3>";
+    						htm+="<p>";
+    						//if(list[i].get_type=="04"){
+    						htm+="1.使用优惠时的下单账号需与领优惠券时的账号一致；<br>";
+                            htm+="2.发放至账户的优惠券需在 异兽志商城内，登陆授权才可使用；<br>";
+                            htm+="3.发放至异兽商城账户的红包登录后即可使用；<br>";
+                            htm+="4.优惠券仅限在线支付时使用，每张订单仅限使用一张红包，红包不找零；<br>";
+                            htm+="5.闽南异兽志保留法律范围内允许的对活动的解释权。";
+    						/*
+    						}else{
+    						htm+="1.本券为全场满减券，下单可自动扣减；<br>";
+    						htm+="2.每张订单只能使用一张卡券，且不得与其他优惠方式同时使用；<br>";
+    						htm+="3.本券不得兑换现金不设找零；<br>";
+    						htm+="4.取消订单，卡券失效不再退回账户。";
+    						}*/
+    						
+    						htm+="</p>";
+    						htm+="</div></li>";
+    				}
+    				if(json.pageNumber < json.totalPage){
+    					htm+="<li id='pageNum1' style='text-align: center;'><div onclick='nextPage1("+json.pageNumber+"); return false;'><span class='more'>更多<span class='arrow1'></span><span class='arrow2'></span></span></div></li>";
+    				}
+    				$("#ticket").append(htm);
+    		},'json');
+    }
+ nextPage2=function(pnum){
+    	$("#pageNum2").remove();
+    	$.post("${ctx}/mine/isticketPage",{
+    		 page:pnum+1
+    			},function(json){
+    				var htm="";
+    				var list=json.list;
+    				for(var i in list){
+    					htm+="<li class='t_detail'>";
+ 						htm+="<div class='header'>";
+ 						htm+="<div class='content'>";
+ 						htm+="<strong>"+list[i].mortgage_amount+"</strong>";
+ 						htm+="<div class='info'>";
+ 						htm+="<h2>满"+list[i].minimum_threshold_amount+"立减"+list[i].mortgage_amount+"元</h2>";
+ 						htm+="<h3>有效期:"+list[i].df_begin_date+"-"+list[i].df_end_date+"</h3>";
+ 						htm+="</div></div></div>";
+ 						htm+="<div class='body'>";
+ 						htm+="<h3>使用说明：</h3>";
+ 						htm+="<p>";
+ 						//if(list[i].get_type=="04"){
+    						htm+="1.使用优惠时的下单账号需与领优惠券时的账号一致；<br>";
+                            htm+="2.发放至账户的优惠券需在 异兽志商城内，登陆授权才可使用；<br>";
+                            htm+="3.发放至异兽商城账户的红包登录后即可使用；<br>";
+                            htm+="4.优惠券仅限在线支付时使用，每张订单仅限使用一张红包，红包不找零；<br>";
+                            htm+="5.闽南异兽志保留法律范围内允许的对活动的解释权。";
+    						/*
+    						}else{
+    						htm+="1.本券为全场满减券，下单可自动扣减；<br>";
+    						htm+="2.每张订单只能使用一张卡券，且不得与其他优惠方式同时使用；<br>";
+    						htm+="3.本券不得兑换现金不设找零；<br>";
+    						htm+="4.取消订单，卡券失效不再退回账户。";
+    						}*/
+ 						htm+="</p>";
+ 						htm+="</div></li>";
+    				}
+    				if(json.ispageNumber < json.istotalPage){
+    					htm+="<li id='pageNum2' style='text-align: center;'><div onclick='nextPage2("+json.ispageNumber+"); return false;'><span class='more'>更多<span class='arrow1'></span><span class='arrow2'></span></span></div></li>";
+    				}
+    				$("#isticket").append(htm);
+    		},'json');
+    } 
+</script>
+</body>
+</html>

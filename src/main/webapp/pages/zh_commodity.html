@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html>
+<#include "include/header.html"/>
+<!-- <script src="http://res.wx.qq.com/open/js/jweixin-1.0.0.js"></script> -->
+<body>
+<div class="page" style="background:#000000;">
+	<div class="content m">
+		<div class="main">
+		<div class="product_list" id="product_list">
+		<#list pcList as b >
+			<div class="item">
+					<a href="javascript:void(0);" version_stock="${b.version_stock!}" commodity_id="${b.id!}" onclick="getZhCommodity(this)">
+					    <#if b.commodity_logo??>
+						<div class="frame"><img src="${server_uri!}${b.commodity_logo!}" class="pic"></div>
+						<#else>
+						<div class="frame"><img src="" class="pic"></div>
+						</#if>
+						<div class="title">${b.commodity_name!}</div>
+					</a>
+			</div>
+		</#list>
+		</div>
+	</div>
+  </div>
+</div>
+<!--二维码提示-->
+<div class="dialog" id="dialog_attention" onClick="dialogClose()">
+	<div class="dialog_content1">
+		<div class="alert1">
+			<img src="${ctx}/resource/images/at_code.png?201607161" class="icon1">
+		</div>	
+	</div>
+</div>
+<div class="dialog" id="ticketD">
+	<img src="${ctx}/resource/images/dialog_close.png" alt="close" class="dialog-close" onclick="dialogClose()">
+	<img src="${ctx}/resource/images/use_ticket_btn.png" class="use-ticket" id="subimg" onclick="submit()">
+</div>
+<script type="text/javascript">
+$(function(){
+    dialog('#dialog_attention');
+    getZhCommodity=function(t){
+      var commodity_id = $(t).attr("commodity_id");
+      var version_stock = $(t).attr("version_stock");
+      alert(commodity_id);
+      alert(version_stock);
+	  dialog("#ticketD");
+	  $("#subimg").attr("disabled","disabled");
+	  $.ajax({
+			type:"POST",
+			url:"${ctx}/home/getZhCommodity",
+			data:{"commodity_id":commodity_id},
+			success : function(json){
+				if(json.code == 0){
+					dialog('#ok',3000,json.msg);
+				}else{
+					dialog('#ok',3000,json.msg);
+				}
+				$("#submit").removeAttr("disabled"); 
+			}
+		});
+	}
+})
+</script>
+</body>
+</html>

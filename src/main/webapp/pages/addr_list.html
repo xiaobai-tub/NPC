@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html>
+<#include "include/header.html"/>
+<body>
+<div class="page">
+	<div class="content m">
+		<div class="addr_list">
+		<#list addressList as a >
+			<div class="item" id="${a.id!}">
+			    <div class="radio">
+					<input type="radio" id="radio_${a.id!}" name="address" value="${a.id!}" /><label for="radio_${a.id!}"></label>
+				</div>
+				<div class="address">${a.province_name!}${a.city_name!}${a.country_name!}${a.geography_location!}</div>
+				<div class="name">${a.receiver_name!}${a.telephone!}</div>
+				<a href="javascript:void(0);" onclick="pccAddr('${a.id!}'); return false;"><img src="${ctx}/resource/images/icon_edit.png" class="btn_edit"></a>
+				<div class="del" onClick="deleteAddr('${a.id!}')"><span>删除</span></div>
+			</div>
+			</#list>
+			<a href="javascript:void(0);" onclick="pccAddr(); return false;" class="ctr"><img src="${ctx}/resource/images/icon_add.png" class="btn_add" > 新增收货地址</a>
+		</div>
+	</div>
+	<#if is_order == '01'>
+	<div class="footer">
+		<div class="btn_group">
+			<div ><span class="btn btn_red btn_buy">确 定</span></div>
+		</div>
+	</div>
+	</#if>
+</div>
+<script type="text/javascript">
+$(function(){
+var forward_type="";
+<#if forward_type??>
+forward_type="${forward_type!}";
+</#if>
+ $(".addr_list .item").swipe({
+		swipe:function(event, direction, distance, duration, fingerCount) {
+			if(direction == "left"){
+				$(this).addClass("on")
+			}else if(direction == "right"){
+				$(this).removeClass("on")
+			}
+		}
+	})
+	
+ pccAddr=function(){
+ if(forward_type == "01"){
+   window.location.href="${ctx}/mine/pccAddr?address_id="+"&version_id="+"${version_id!}"+"&countNum="+"${countNum!}"+"&price="+"${price!}"+"&type="+"${type!}"+"&forward_type="+forward_type+"&id="+"${id!}"+"&is_order="+"${is_order!}";
+ }
+	
+}  
+ pccAddr=function(str){
+ if(forward_type == "01"){
+   window.location.href="${ctx}/mine/pccAddr?address_id="+str+"&version_id="+"${version_id!}"+"&countNum="+"${countNum!}"+"&price="+"${price!}"+"&type="+"${type!}"+"&forward_type="+forward_type+"&id="+"${id!}"+"&is_order="+"${is_order!}"+"&commodity_type="+"${commodity_type!}"+"&slotId="+"${slotId!}";
+ } else
+  if(forward_type == "02"){
+   window.location.href="${ctx}/mine/pccAddr?address_id="+str+"&buy_id="+"${buy_ids!}"+"&commodity_type="+"${commodity_type!}"+"&forward_type="+forward_type+"&is_order="+"${is_order!}"+"&slotId="+"${slotId!}";
+ }else if(forward_type == "03"){
+    window.location.href="${ctx}/mine/pccAddr?address_id="+str+"&buy_id="+"${buy_ids!}"+"&commodity_type="+"${commodity_type!}"+"&forward_type="+forward_type+"&is_order="+"${is_order!}"+"&slotId="+"${slotId!}";
+ 
+ }else{
+ window.location.href="${ctx}/mine/pccAddr?address_id="+str+"&is_order="+"${is_order!}"+"&buyId="+"${buyId!}";
+ }
+	
+} 
+ deleteAddr=function(id){
+	$.ajax({
+		type:"POST",
+		url:"${ctx}/mine/deleteAddr?remove_id="+id,
+		success : function(json){
+			if(json.code==0){
+				$("#"+id).remove();
+			}else{
+				dialog('#ok',3000,json.msg);
+			}
+			   
+		}
+	});
+} 
+$(".footer").click(function(){
+ var address_id=$('input[name="address"]:checked ').val();
+if(address_id=='' || address_id==undefined || address_id==null){
+		   dialog('#ok',3000,"送货地址不能为空");
+		   return;
+           } 
+           
+if(forward_type == "01"){
+window.location.href="${ctx}/pay/forwardConfirm?version_id="+"${version_id!}"+"&countNum="+"${countNum!}"+"&price="+"${price!}"+"&type="+"${type!}"+"&address_id="+address_id+"&id="+"${id!}"+"&commodity_type="+"${commodity_type!}"+"&slotId="+"${slotId!}";	
+	}
+	if(forward_type == "02"){
+window.location.href="${ctx}/pay/carForwardConfirm?buy_id="+"${buy_ids!}"+"&commodity_type="+"${commodity_type!}"+"&address_id="+address_id+"&diff=01"+"&slotId="+"${slotId!}";	
+	}
+	if(forward_type == "03"){
+window.location.href="${ctx}/pay/orderForwardConfirm?total_id="+"${buy_ids!}"+"&commodity_type="+"${commodity_type!}"+"&address_id="+address_id+"&slotId="+"${slotId!}";	
+	}
+	if(forward_type == ""){
+		$.ajax({
+			type:"POST",
+			url:"${ctx}/one/oneAddAddress?address_id="+address_id+"&total_id="+"${buyId!}",
+			success : function(json){
+				if(json.code==0){
+					window.location.href="${ctx}/mine/MyOneBuy?is_win=02&type=1";	
+				}else{
+					dialog('#ok',3000,json.msg);
+				}
+			}
+		});
+		
+	}
+	})
+})
+</script>
+</body>
+</html>

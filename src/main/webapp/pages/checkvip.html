@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=750, user-scalable=no" />
+        <title>异兽招行卡会员专题</title>
+        <link rel="stylesheet" type="text/css" href="${ctx}/resource/monstervip/css/reset.css" />
+        <style type="text/css">
+            .wrap {
+                position: relative;
+                width: 100%;
+                height: 100%;
+                background: url('${ctx}/resource/monstervip/img/checkvip.png') no-repeat;
+            }
+            @media screen and (min-width: 768px) {
+                .wrap {
+                    width: 750px;
+                    margin: 0 auto;
+                }
+            }
+            .number {
+                position: absolute;
+                left: 90px;
+                bottom: 120px;
+                width: 570px;
+                height: 220px;
+            }
+            .number input {
+                width: 530px;
+                height: 80px;
+                border-radius: 10px;
+                padding-left: 40px;
+                font-size: 30px;
+                color: #9f9f9f;
+                line-height: 80px;
+            }
+            .submit {
+                width: 360px;
+                height: 90px;
+                border-radius: 10px;
+                margin: 45px auto 0;
+                background-color: #d41f1f;
+                font-size: 40px;
+                color: #fff;
+                line-height: 90px;
+                text-align: center;
+            }
+            .mengban {
+            	display : none;
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background: rgba(0, 0, 0, 0.5);
+            }
+            .tipwindow {
+                position: absolute;
+                top: 40%;
+                left: 85px;
+                width: 580px;
+                height: 330px;
+                border-radius: 10px;
+                background-color: #fff;
+            }
+            .close {
+                position: absolute;
+                top: -45px;
+                right: 10px;
+                width: 38px;
+                height: 38px;
+                background: url('${ctx}/resource/monstervip/img/close.png');
+            }
+            .tipwindow h1 {
+                width: 100%;
+                height: 105px;
+                border-top-right-radius: 10px;
+                border-top-left-radius: 10px;
+                background-color: #efeae8;
+                font-size: 38px;
+                color: #9f7246;
+                text-align: center;
+                line-height: 105px;
+            }
+            .tipwindow h2 {
+                overflow: hidden;
+                width: 100%;
+                height: 80px;
+                font-size: 38px;
+                color: #d41f1f;
+                text-align: center;
+                line-height: 105px;
+            }
+            .tipwindow h3 {
+                overflow: hidden;
+                width: 100%;
+                /* height: 80px; */
+                font-size: 30px;
+                color: #9f9f9f;
+                text-align: center;
+                line-height: 40px;
+            }
+         </style>
+    </head>
+    <body>
+        <div class="wrap">
+            <div class="number">
+                <input type="text" placeholder="请输入您的手机号码" id="telephone" />
+                <div class="submit" onclick="checkVip()">提交</div>
+            </div>
+            <div class="mengban">
+                <div class="tipwindow">
+                    <span class="close"></span>
+                    <h1>手机验证</h1>
+                    <h2 id="tail-title">验证成功</h2>
+                    <h3 id="msg">将跳转至会员页</h3>
+                </div>
+            </div>
+        </div>
+    </body>
+    <script type="text/javascript" src="${ctx}/resource/js/jquery-2.1.4.min.js"></script>
+    <script type="text/javascript">
+        $('.close').on('click', function(){
+            $('.mengban').css({
+                display: 'none'
+            })
+        })
+        function tipwindow(){
+            $('.mengban').css({
+                display: 'block'
+            })
+        } 
+        function skipSuc(){
+        	setTimeout((function(){
+                window.location.href = "${ctx}/home/forwardCommodityPage";
+            }), 1500)
+        }
+		function checkVip(){
+    	var telephone = $("#telephone").val();
+    	if( telephone=='' || telephone==undefined || telephone==null ){
+    		$("#tail-title").html("验证失败");
+      		$("#msg").html("手机号不能为空");
+      		tipwindow();
+      		return;
+    	}
+    	if(telephone.length<11){
+    		$("#tail-title").html("验证失败");
+      		$("#msg").html("手机号错误");
+      		tipwindow();
+      		return;
+      	}
+    	$.ajax({
+    		type:"POST",
+    		async : false,	
+    		url:"${ctx}/home/judgeVip",
+    		data:{
+    			"telephone":telephone
+    					},
+    		success : function(json){
+    			 if(json.code == 0 ){
+    				 $("#tail-title").html("验证成功");
+    		      	 $("#msg").html("将跳转至会员页");
+    				 tipwindow();
+    				 skipSuc();
+    			 }else{
+    				 $("#tail-title").html("验证失败");
+    				 $("#msg").html(json.msg);
+    				 tipwindow();
+    			 }
+    		}
+    	}); 
+    }
+    </script>
+<div style="display:none;" >
+ <script src="https://s4.cnzz.com/z_stat.php?id=1259913599&web_id=1259913599" language="JavaScript" ></script>
+</div>    
+</html>

@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=750, user-scalable=no" />
+        <meta name="format-detection" content="telephone=no">
+        <title>异兽招行卡会员专题</title>
+        <link rel="stylesheet" type="text/css" href="${ctx}/resource/monstervip/css/reset.css" />
+        <link rel="stylesheet" type="text/css" href="${ctx}/resource/monstervip/css/monstervip.css?10" />
+    </head>
+    <body>
+        <div class="wrap">
+            <div class="bigpic"></div>
+            <div class="vipfree">
+                <div class="title">
+                    <h2>会员免费领取(12月12日0点开抢，抢完即止)</h2>
+                </div>
+                <div class="freecon clearfix" id="freecon">
+                <#list commodityList as c>
+                    <dl onclick="getCommodityDetail('${c.id!}');">
+                        <dd>
+                            <img src="${server_uri!}${c.commodity_logo!}" alt="" />
+                        </dd>
+                        <dt>
+                            <h2 class="productname">
+                                ${c.commodity_name!}
+                            </h2>
+                            <span class="price">￥<em>0</em></span>
+                            <span class="limit">
+                               	 限量
+                            </span>
+                        </dt>
+                    </dl>
+                </#list>
+                </div>
+            </div>
+            <div id="morePage">
+	            <#if commodityPageNumber lt commodityTotalPage>
+	            	<div class="freeconmore" id="more_page" onclick="nextPage(${commodityPageNumber!}); return false;">查看更多</div>
+	            </#if>
+            </div>
+            <div class="vipcard">
+                <div class="title">
+                    <h2>会员卡劵</h2>
+                </div>
+                <div class="cardcon" id="cardcon">
+                <#list ptList as p>
+                    <dl ticket_id="${p.id!}">
+                        <dd>
+                            <img src="${p.ticket_logo!}" alt="" />
+                        </dd>
+                        <dt>
+                            <h2 class="productname">
+                                ${p.ticket_title!}
+                            </h2>
+                            <span class="price">价值￥<em>${p.mortgage_amount!}</em></span>
+                        </dt>
+                    </dl>
+                </#list>
+                </div>
+            </div>
+            <div class="digitpro">
+                <div class="title">
+                    <h2>数字产品</h2>
+                </div>
+                <div class="digitcon">
+                    <dl onclick="forwardBiZhi();">
+                        <dd>
+                            <img src="${ctx}/resource/monstervip/img/digit1.png" alt="" />
+                        </dd>
+                        <dt>
+                            <h3>手机壁纸</h3>
+                        </dt>
+                    </dl>
+                    <dl onclick=forwardBiaoQingBao();"">
+                        <dd>
+                            <img src="${ctx}/resource/monstervip/img/digit2.png" alt="" />
+                        </dd>
+                        <dt>
+                            <h3>异兽表情包</h3>
+                        </dt>
+                    </dl>
+                    <dl onclick="forward();">
+                        <dd>
+                            <img src="${ctx}/resource/monstervip/img/digit3.png" alt="" />
+                        </dd>
+                        <dt>
+                            <h3>搜狗输入法</h3>
+                        </dt>
+                    </dl>
+                </div>
+            </div>
+            <a href="${ctx}/home/homePage" class="getin">进入异兽商城</a>
+        </div>
+        <div class="mengban">
+            <div class="win win1">
+                <div class="close">
+                </div>
+                <h2 class="wintit">
+                    开卡红包
+                </h2>
+                <div class="wincon">
+                    <div class="winpic"></div>
+                    <h3>使用时限: 2016/11-2017/11</h3>
+                    <span class="number">数量: <em>10</em></span>
+                    <div class="winbtn" subimg="subimg" receive_num="10" onclick="receive(this);">点击领取</div>
+                </div>
+            </div>
+            <div class="win win2">
+                <div class="close">
+                </div>
+                <h2 class="wintit">
+                    会员满减
+                </h2>
+                <div class="wincon">
+                    <div class="winpic"></div>
+                    <h3>订单满128减20</h3>
+                    <h3>使用时限: 2016/11-2017/11</h3>
+                    <span class="number">数量: <em>5</em></span>
+                    <div class="winbtn" subimg="subimg" receive_num="5" onclick="receive(this);">点击领取</div>
+                </div>
+            </div>
+            <div class="win win3">
+                <div class="close">
+                </div>
+                <h2 class="wintit">
+                    生日“兽”礼
+                </h2>
+                <div class="wincon">
+                    <div class="winpic"></div>
+                    <h3>生日快乐！你获得了50元现金劵</h3>
+                    <div class="winbtn" class="subimg" subimg="subimg" receive_num="1" onclick="receive(this);">点击领取</div>
+                </div>
+            </div>
+            <div class="win win4">
+                <div class="close">
+                </div>
+                <h2 class="wintit">
+                    新品体验劵
+                </h2>
+                <div class="wincon">
+                    <div class="winpic"></div>
+                    <h3>满88减10</h3>
+                    <h3>使用时限: 2016/11-2017/11</h3>
+                    <div class="winbtn" subimg="subimg" receive_num="10" onclick="receive(this);" >点击领取</div>
+                    <span class="number">数量: <em>10</em></span>
+                </div>
+            </div>
+        </div>
+        <div class="mengban2">
+           <div class="tip">
+               <h2 id="tail-title">SORRY</h2>
+               <span id="tail-msg">领取失败</span>
+           </div>
+        </div>
+    </body>
+    <script type="text/javascript" src="${ctx}/resource/js/jquery-2.1.4.min.js"></script>
+    <script type="text/javascript">
+    var cards = document.getElementById('cardcon').children;
+    for (var i = 0; i < cards.length; i++) {
+        cards[i].onclick = function(){
+            $('.mengban').css({
+                display: 'block'
+            })
+            if($(this).index() == 0) {
+                $('.win1').css({
+                    display: 'block'
+                })
+                $('.win1').siblings().css({
+                    display: 'none'
+                })
+            }
+            if($(this).index() == 1) {
+                $('.win2').css({
+                    display: 'block'
+                })
+                $('.win2').siblings().css({
+                    display: 'none'
+                })
+            }
+            if($(this).index() == 2) {
+                $('.win3').css({
+                    display: 'block'
+                })
+                $('.win3').siblings().css({
+                    display: 'none'
+                })
+            }
+            if($(this).index() == 3) {
+                $('.win4').css({
+                    display: 'block'
+                })
+                $('.win4').siblings().css({
+                    display: 'none'
+                })
+            }
+            var ticket_id = $(this).attr("ticket_id");
+            receive = function(t){
+            	var receive_num = $(t).attr("receive_num");
+            	$(t).attr("disabled","disabled");
+          		$.ajax({
+          			async:false,
+          			type:"POST",
+          			url:"${ctx}/home/receiveTicket",
+          			data:{
+          				"ticket_id":ticket_id,
+          				"receive_num":receive_num
+          				},
+          			success : function(json){
+          				if(json.code == 0){
+          					$('.mengban').css({
+          			            display: 'none'
+          			        })
+          			        $("#tail-title").html("SUCCESS");
+          					$("#tail-msg").html(json.msg);
+          					$('.mengban2').css({
+          	                    display: 'block'
+          	                })
+          				}else{
+          					$('.mengban').css({
+          			            display: 'none'
+          			        })
+          					$("#tail-title").html("SORRY");
+          					$("#tail-msg").html(json.msg);
+          					$('.mengban2').css({
+          	                    display: 'block'
+          	                })
+          				}
+          				$(t).removeAttr("disabled"); 
+          			}
+          		});
+            } 
+        }	
+    }
+    function getCommodityDetail(commodity_id){
+    	window.location.href="${ctx}/home/zhCommodityDetail?id="+commodity_id;
+    } 
+    function forward(){
+    	window.location.href="http://pinyin.sogou.com/skins/detail/view/info/531879?rf=search&tf=p";
+    }
+    function forwardBiZhi(){
+    	window.location.href="${ctx}/home/forwardBiZhi";
+    }
+    function forwardBiaoQingBao(){
+    	window.location.href="${ctx}/home/forwardBiaoQingBao";
+    }
+    nextPage = function(pnum){
+    	$.post("${ctx}/home/activityCommodityPage",{
+    		page:pnum+1
+    		},function(json){
+    			var htm="";
+    			var pageHtm="";
+    			var list=json.list;
+    			for(var i in list){
+    				htm+="<dl onclick='getCommodityDetail(\""+list[i].id+"\");'>";
+			        htm+="<dd>";
+					if(list[i].commodity_logo && list[i].commodity_logo !=null && list[i].commodity_logo!=""){
+						htm+="<img src='${server_uri!}"+list[i].commodity_logo+"' alt='' />";
+					}else{
+						htm+="<img src='' alt='' />";
+					}
+					htm+="</dd>";
+					htm+="<dt>";
+					htm+="<h2 class='productname'>";
+					htm+=""+list[i].commodity_name+"";
+					htm+="</h2>";
+					htm+="<span class='price'>￥<em>0</em></span>";
+					htm+="<span class='limit'>";
+					htm+="限量";
+					htm+="</span>";
+					htm+="</dt></dl>";
+    			}
+    			if(json.pageNumber < json.totalPage){
+    				pageHtm+="<div class='freeconmore' id='more_page' onclick='nextPage("+json.pageNumber+"); return false;'>查看更多</div>";
+    			}
+    			$("#freecon").append(htm);
+    			$("#morePage").html(pageHtm);
+    	},'json');
+    }
+    $('.close').on('click', function(){
+        $('.mengban').css({
+            display: 'none'
+        })
+    })
+    $('.mengban2').on('click', function(){
+            $('.mengban2').css({
+                display: 'none'
+            })
+     })
+    </script>
+<div style="display:none;" >
+ <script src="https://s4.cnzz.com/z_stat.php?id=1259913599&web_id=1259913599" language="JavaScript" ></script>
+</div>    
+</html>

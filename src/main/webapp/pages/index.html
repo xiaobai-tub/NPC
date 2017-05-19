@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html>
+<#include "include/header.html"/>
+<script src="http://res.wx.qq.com/open/js/jweixin-1.0.0.js"></script>
+<body>
+<div class="page" style="background:#000000;">
+	<div class="content m">
+		   <div class="swiper-container swiper">
+			<div class="swiper-wrapper">
+			<#list topAdvertisementList as t>
+				<div class="swiper-slide"><img src="${server_uri!}${t.advertisement_logo!}" class="pic" onclick="forward('${t.forward_url!}');return false;"></div>
+			</#list>
+			</div>
+			<div class="swiper-pagination"></div>
+		</div>
+	    <!-- <div id="banner"></div> -->
+		<div class="main">
+		<!-- <div class="item_desc">
+				<div class="column first">
+					<h2>一元竞拍</h2>
+				</div>
+				<div class="introduce">说明：每次1元即可参与竞拍，每个产品参与人数满后，系统会根据计算规则进行抽奖，中奖用户填写完送货地址后即可获得该奖品。</div>
+				<div class="link"><a href="${ctx}/home/introduceOnePurchase"> 规则介绍></a></div>
+			</div>
+			<div class="zc_list" id="zc_list" >
+		<#list purchaseList as d>
+			<div class="item" >
+			<a href="javascript:void(0);" onclick="onePurchaseDetail('${d.id!}');return false;">
+			<#if d.commodity_logo??>
+				<img src="${server_uri!}${d.commodity_logo!}" class="pic">
+				<#else>
+				<img src="" class="pic">
+				</#if>
+				<div class="bottom">
+					<div class="item_btn">参与竞拍</div>
+					<div class="item_info">
+						<div class="remainder">剩余<span>${d.surplus_count!}</span></div>
+						<div class="count">总需${d.total_count!}人次</div>
+						<div class="bar"><span style="width:${d.per!}%"></span></div>
+					</div>
+					
+				</div>
+				
+				</a>
+			</div>
+			</#list>
+			<#if purchasePageNumber lt purchaseTotalPage>
+			  <li id="pageNum2" style="text-align: center;position:relative;top:4px;margin: 10px 5px;"><div onclick="nextPage2(${purchasePageNumber}); return false;"><span class="more">更多<span class="arrow1"></span><span class="arrow2"></span></span></div></li>	
+			</#if>
+		</div> -->
+		<!-- <a id="lingqu" onclick="toIndexTicket();">
+		<div class="item_desc">
+				<div class="column second">
+					
+					<button>立即领取</button>
+				</div>
+			</div>
+		</a> -->
+		<div class="item_desc">
+				<div class="column second">
+					<h2>商城</h2>
+				</div>
+		</div>
+		<div class="product_list" id="product_list">
+		<!-- <#if commodityActive??>
+		    <div class="item">
+				<a href="javascript:void(0);" onclick="forward('${commodityActive.skip_url!}');return false;">
+				<#if commodityActive.commodity_logo??>
+					<div class="frame"><img src="${server_uri!}${commodityActive.commodity_logo!}" class="pic"></div>
+					<#else>
+					<div class="frame"><img src="" class="pic"></div>
+					</#if>
+					<div class="price">￥${commodityActive.commodity_price!}</div>
+					<div class="yuan">元起</div>
+					<div class="title">${commodityActive.commodity_name!}</div>
+				</a>
+		    </div>
+		  </#if> -->
+		<#list commodityList as b >
+			<#if b.commodity_category=='03'>
+			<div class="item">
+					<a href="javascript:void(0);" onclick="forwardURL('https://open.weixin.qq.com/connect/oauth2/authorize?appid=wx048844948eef28ca&redirect_uri=http%3a%2f%2fwww.strongtec.com.cn%2fPhflow%2findex.aspx%3fReferralId%3d0&response_type=code&scope=snsapi_base&state=STATE#wechat_redirect');return false;">
+					<#if b.commodity_logo??>
+						<div class="frame"><img src="${server_uri!}${b.commodity_logo!}" class="pic"></div>
+						<#else>
+						<div class="frame"><img src="" class="pic"></div>
+						</#if>
+						<div class="price">￥${b.commodity_price!}</div>
+						<div class="yuan">元起</div>
+						<div class="title">${b.commodity_name!}</div>
+					</a>
+				</div>
+			<#else>
+			<div class="item">
+					<a href="javascript:void(0);" onclick="getCommodityDetail('${b.id!}');return false;">
+					<#if b.commodity_logo??>
+						<div class="frame"><img src="${server_uri!}${b.commodity_logo!}" class="pic"></div>
+						<#else>
+						<div class="frame"><img src="" class="pic"></div>
+						</#if>
+						<div class="price">￥${b.commodity_price!}</div>
+						<div class="count">已销售:${b.sales_volume!}</div>
+						<div class="title">${b.commodity_name!}</div>
+					</a>
+				</div>
+			</#if>
+		</#list>
+			
+			<#if commodityPageNumber lt commodityTotalPage>
+			<li id="pageNum1" style="text-align: center;position:relative;top:4px;margin: 10px 5px;"><div onclick="nextPage1(${commodityPageNumber}); return false;"><span class="more">更多<span class="arrow1"></span><span class="arrow2"></span></span></div></li>
+			</#if> 
+		</div>
+		
+
+	</div>
+	
+  </div>
+</div>
+<!--二维码提示-->
+<div class="dialog" id="dialog_attention" onClick="dialogClose()">
+	<div class="dialog_content1">
+		<div class="alert1">
+			<img src="${ctx}/resource/images/at_code.png?201607161" class="icon1">
+		</div>	
+	</div>
+</div>
+
+<div class="dialog" id="congrats">
+	<a href="${ctx}/mine/MineInformation"><img src="${ctx}/resource/images/btn_profile.png" alt="个人中心" class="btn-profile"></a>
+</div>
+<div class="dialog" id="ticketD">
+	<img src="${ctx}/resource/images/dialog_close.png" alt="close" class="dialog-close" onclick="dialogClose()">
+	<img id="index_pic" src="${ctx}/resource/images/badge_100.png" alt="badge">
+	<!-- <img src="${ctx}/resource/images/pyq.png" alt="pyq">
+	<img src="${ctx}/resource/images/use_ticket_btn.png" class="use-ticket" onclick="forward('home/homePage');"> -->
+</div>
+<script type="text/javascript">
+$(function(){
+<#if is_h5??>
+ dialog("#congrats")
+<#else>
+<#if login_num == 1 >
+dialog('#dialog_attention')
+</#if>
+</#if>
+
+ $("#a_my").attr("href","${ctx}/mine/MineInformation");
+ $("#a_car").attr("href","${ctx}/car/carList");
+ $("#a_shop").attr("href","${ctx}/home/homePage");
+var swiperH = new Swiper('.swiper', { 
+		pagination: '.swiper-pagination',
+		autoplayDisableOnInteraction : true,
+		autoplay:2000
+	});
+//滑动图片尺寸
+$(".swiper .pic").height($(".page").width()*300/640)
+nextPage1 = function(pnum){
+	$("#pageNum1").remove();
+	$.post("${ctx}/home/commodityListPage",{
+		page:pnum+1
+		},function(json){
+			var htm="";
+			var list=json.list;
+			for(var i in list){
+			            htm+="<div class='item'>";
+			            htm+="<a href='javascript:void(0);' onclick='getCommodityDetail(\""+list[i].id+"\");return false;'>";
+					if(list[i].commodity_logo && list[i].commodity_logo !=null && list[i].commodity_logo!=""){
+					
+						htm+="<div class='frame'><img src='${server_uri!}"+list[i].commodity_logo+"' class='pic'></div>";
+					}else{
+						htm+="<div class='frame'><img src='' class='pic'></div>";
+					}
+					var commodity_price=(list[i].commodity_price == null)?"0.00":list[i].commodity_price;
+					htm+="<div class='price'>￥"+commodity_price+"</div>";
+					var sales_volume=(list[i].sales_volume == null)?"0":list[i].sales_volume;
+					htm+="<div class='count'>已销售:"+sales_volume+"</div>";
+					var commodity_name=(list[i].commodity_name == null)?"":list[i].commodity_name;
+					htm+="<div class='title'>"+commodity_name+"</div>";
+					htm+="</a></div>";
+			}
+			if(json.pageNumber < json.totalPage){
+				htm+="<li id='pageNum1' style='text-align: center;position:relative;top:4px;margin: 10px 5px;'><div onclick='nextPage1("+json.pageNumber+"); return false;'><span class='more'>更多<span class='arrow1'></span><span class='arrow2'></span></span></div></li>";
+			}
+			$("#product_list").append(htm);
+	},'json');
+}
+
+ nextPage2 = function(pnum){
+	$("#pageNum2").remove();
+	$.post("${ctx}/home/onePurchaseListPage",{
+		page:pnum+1
+		},function(json){
+			var htm="";
+			var list=json.list;
+			for(var i in list){
+			            htm+="<div class='item'>";
+			            htm+="<a href='javascript:void(0);' onclick='onePurchaseDetail(\""+list[i].id+"\");return false;'>";
+					if(list[i].commodity_logo && list[i].commodity_logo !=null && list[i].commodity_logo!=""){
+					
+						htm+="<img src='${server_uri!}"+list[i].commodity_logo+"' class='pic'>";
+					}else{
+						htm+="<img src='' class='pic'>";
+					}
+					htm+="<div class='bottom'>";
+					htm+="<div class='item_btn'>参与竞拍</div>";
+					htm+="<div class='item_info'>";
+					var surplus_count=(list[i].surplus_count == null)?"0.00":list[i].surplus_count;
+					htm+="<div class='remainder'>剩余<span>"+surplus_count+"</span></div>";
+					var total_count=(list[i].total_count == null)?"":list[i].total_count;
+					htm+="<div class='count'>总需"+total_count+"人次</div>";
+					htm+="<div class='bar'><span style='width:"+list[i].per+"%'></span></div>";
+					htm+="</div></div>";
+			        htm+="</a></div>";
+			}
+			if(json.pageNumber < json.totalPage){
+				htm+="<li id='pageNum2' style='text-align: center;position:relative;top:4px;margin: 10px 5px;'><div onclick='nextPage2("+json.pageNumber+"); return false;'><span class='more'>更多<span class='arrow1'></span><span class='arrow2'></span></span></div></li>";
+			}
+			$("#zc_list").append(htm);
+	},'json');
+}
+	
+	getCommodityDetail=function(id){
+	  window.location.href="${ctx}/home/commodityDetail?id="+id;
+	}
+	
+	onePurchaseDetail=function(id){
+	  window.location.href="${ctx}/one/getOnePurchase?id="+id;
+	}
+	forward=function(url){
+	  window.location.href="${ctx}/"+url;
+	}
+	forwardURL=function(url){
+		  window.location.href=url;
+	}
+	toIndexTicket=function(){
+	  //$("#lingqu").removeAttr("onclick");
+	  $("#lingqu").bind('click', toIndexTicket);
+	  $.ajax({
+			type:"POST",
+			url:"${ctx}/home/toIndexTicket",
+			success : function(json){
+				if(json.code == 0){
+					var diaolog_pic = "${ctx}/resource/images/badge_100.png";
+					if(json.mortgage_amount == 100){
+						diaolog_pic="${ctx}/resource/images/badge_100.png";
+					}else if(json.mortgage_amount == 10){
+						diaolog_pic="${ctx}/resource/images/badge_10.png";
+					}else if(json.mortgage_amount == 5){
+						diaolog_pic="${ctx}/resource/images/badge_5.png";
+					}else if(json.mortgage_amount == 2){
+						diaolog_pic="${ctx}/resource/images/badge_2.png";
+					}
+					$("#index_pic").attr("src",diaolog_pic);
+					dialog('#ticketD');
+					$("#lingqu").unbind('click', toIndexTicket);
+				}else{
+					dialog('#ok',3000,json.msg);
+				}
+			}
+		});
+	}
+	$(function() {
+  $(".mask").on("click", dialogClose);
+})
+})
+</script>
+<#include "include/foot.html"/>
+</body>
+</html>

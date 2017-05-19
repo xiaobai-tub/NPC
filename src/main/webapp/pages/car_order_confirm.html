@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html>
+<#include "include/header.html"/>
+<script src="http://res.wx.qq.com/open/js/jweixin-1.0.0.js"></script>
+<body>
+<div class="page">
+	<div class="content m">
+		<div class="cart_confirm">
+		<#list commodityList as a>
+			<div class="item">
+			<#if a.commodity_logo??>
+				<img src="${server_uri!}${a.commodity_logo!}" class="pic">
+				<#else>
+				<img src="" class="pic">
+				</#if>
+				<div class="title">${a.commodity_name!}</div>
+				<div class="price">￥${a.per_price!}</div>
+				<div class="attr">型号:${a.version_type!}</div>
+				<div class="attr">数量:${a.buy_num!}</div>
+			</div>
+			</#list>
+		</div>
+		<#if commodity_type == '01' >
+			<#if sendAddress?? > 
+			<div class="mod_addr">
+			<div class="t">送至</div>
+			<div class="address">${sendAddress.province_name!}${sendAddress.city_name!}${sendAddress.country_name!}${sendAddress.geography_location!}</div>
+			<div class="name">${sendAddress.receiver_name!}${sendAddress.telephone!}</div>
+			</div>
+			<#else>
+			<div class="mod_addr">
+			<div class="t">送至</div>
+			<div class="address"></div>
+			<div class="name"></div>
+			</div>
+			</#if>
+			</#if>
+		<div class="mod_attr">
+			<div class="item">
+				<div class="fl">配送方式</div>
+				<div class="fr fr_">商家配送</div>
+			</div>
+		</div>
+		
+		<div class="mod_attr mod_large">
+			<div class="item">
+				<div class="fl">商品总额</div>
+				<div class="fr fr_">￥<span class="red" >${total_price!}</span></div>
+			</div>
+			<#if commodity_category??>
+				<div class="item">
+					<div class="fl">运费</div>
+					<div class="fr fr_">￥<span class="red" id="send_cost">10</span></div>
+				</div>
+			<#else>
+				<#if commodity_type == '01' >
+				<div class="item">
+					<div class="fl">运费</div>
+					<div class="fr fr_">￥<span class="red" id="send_cost">0</span></div>
+				</div>
+				</#if>
+			</#if>
+		</div>
+		<#if ptrList??>		
+		<#if (ptrList?size>0)>
+		<div class="mod_attr mod_large">
+			<h1 class="item title">选择优惠券</h1>
+			<div class="item">
+			<#list ptrList as ptr >
+				<div class="ticket" data-id="${ptr.id!}" data-value="${ptr.mortgage_amount!}"> <!--选中的加checked-->
+					<div class="content">
+						<strong>${ptr.mortgage_amount!}</strong>
+						<div class="info">
+							<h2>满${ptr.minimum_threshold_amount!}立减${ptr.mortgage_amount!}元</h2>
+							<h3>有效期：${ptr.df_begin_date!}-${ptr.df_end_date!}</h3>
+						</div>
+					</div>
+				</div>
+			</#list>
+			</div>
+		</div>
+		</#if>
+		</#if>	
+	</div>
+
+	<div class="footer">
+		<div class="btn_group tab_c tab_c1">
+			<div class="total" style="font-size:20px;">合计：￥<span id="totalPrice"></span></div>
+			<a href="javascript:void(0);" class="btn btn_red btn_submit" onclick="submitOrder();">提交订单</a>
+		</div>
+	</div>
+	
+</div>
+</body>
+<script type="text/javascript">
+$(function(){
+var price="${total_price!}";
+var send_cost="0";
+<#if commodity_type == '01' >
+send_cost=$("#send_cost").html()
+send_cost=send_cost.replace("￥","");
+</#if>
+price=FloatAdd(parseFloat(price),parseFloat(send_cost));
+$("#totalPrice").html(price);
+var address_id="";
+var commodity_type="${commodity_type!}";
+if(commodity_type == 01){
+<#if sendAddress??>
+address_id="${sendAddress.id!}";
+</#if>
+}
+var ticket_id = "";
+var mortgage_amount = "";
+var that = "";
+$(".ticket").on("click", function() {
+	$(".ticket").removeClass("checked");
+	$(this).addClass("checked");
+	ticket_id=$(this).data("id");
+	if(ticket_id==that){
+		$(".ticket").removeClass("checked");
+		that="";
+		ticket_id="";
+		mortgage_amount = "";
+		$("#totalPrice").html(price);
+	}else{
+		that = $(this).data("id");
+		ticket_id = $(this).data("id");
+		mortgage_amount=$(this).data("value");
+		var checkVal = FloatSub(price,mortgage_amount);
+		if(parseFloat(checkVal)<0){
+			checkVal = 0;
+		}
+		$("#totalPrice").html(checkVal);
+	}
+})
+document.addEventListener('WeixinJSBridgeReady', function onBridgeReady() {
+		submitOrder = function() {
+		if(commodity_type == 01){
+		if(address_id=='' || address_id==undefined || address_id==null){
+		dialog('#ok',3000,"送货地址不能为空");
+		   return;
+           }
+           }
+        $(".btn_submit").removeAttr("onclick");
+        $(".btn_submit").removeClass("btn_red");
+        $(".btn_submit").addClass(".btn_gray");
+        $(".btn_submit").removeAttr("onclick");
+		$.post("${ctx}/pay/createWXPayOrder",{
+			mortgage_amount:mortgage_amount,
+			ticket_id:ticket_id,
+			buy_ids:"${buy_ids!}",
+			commodity_type:"${commodity_type!}",
+			totalPrice:price,
+			address_id:address_id,
+			send_cost:send_cost,
+			type:"01",
+			dispatch_mode:"01"
+		},function(data){
+		 if(data.code==0){
+					//进行支付，后期增加支付品牌判断
+					pay_money=data.pay_money;
+					WeixinJSBridge.invoke('getBrandWCPayRequest',{
+						"appId" : data.params.appId, //公众号名称，由商户传入
+						"timeStamp" : data.params.timeStamp, //时间戳
+						"nonceStr" : data.params.nonceStr, //随机串
+						"package" : data.params.packageStr,
+						"signType" : "MD5", //微信签名方式:1.sha1
+						"paySign" : data.params.paySign ////微信签名
+					},function(res){
+					 	if(res.err_msg == "get_brand_wcpay_request:ok" ) {
+							$.post("${ctx}/pay/subWeiXinPay",{
+								order_no:data.order_id,
+								commodity_id:data.commodity_id,
+								buy_id:data.buy_id,
+								pay_money:pay_money,
+								total_id:data.total_id,
+								commodity_type:data.commodity_type,
+								prepay_id:data.params.packageStr
+							},function(data){
+								if(data.code==0){
+								if(data.order_type == 01){
+									window.location.href="${ctx}/mine/orderDetails?order_status=02&type=1";
+							       }else{
+							        window.location.href="${ctx}/mine/MyOneBuy?status=01&type=1&is_win=";
+							       }
+							}else{
+								 dialog('#ok',3000,data.msg);
+								} 
+							});
+							
+					 	}else{
+					 		dialog('#ok',3000,"支付失败："+res.err_msg);
+					 		if(commodity_type == 01){
+									window.location.href="${ctx}/mine/orderDetails?order_status=01&type=1";
+							       }
+					 	}
+					 	
+				  })
+				  }else if(data.code==3){
+					  if(data.commodity_type == 01){
+							window.location.href="${ctx}/mine/orderDetails?order_status=02&type=1";
+					       }else{
+					        window.location.href="${ctx}/mine/MyOneBuy?status=01&type=1&is_win=";
+					       }
+				  }else{
+					   dialog('#ok',3000,data.msg);
+					   }
+		},'json'); 
+		}
+		})
+		
+		$(".mod_addr").click(function(){
+		window.location.href="${ctx}/mine/getAddr?buy_id="+"${buy_ids!}"+"&commodity_type="+"${commodity_type!}"+"&forward_type=02"+"&is_order=01";
+		})
+});
+</script>
+</html>

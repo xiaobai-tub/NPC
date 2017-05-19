@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html>
+<#include "include/header.html"/>
+<body>
+	<input type="hidden" id="wx_id" />
+	<div class="page">
+		<div class="content m">
+			<div class="swiper-container swiper">
+				<div class="swiper-wrapper" id="swiperWrapper">
+					<#list versionExtList as a> <#if a.ext_url??>
+					<div class="swiper-slide">
+						<img src="${server_uri!}${a.ext_url!}" class="pic">
+					</div>
+					<#else>
+					<div class="swiper-slide">
+						<img src="" class="pic">
+					</div>
+					</#if> </#list>
+				</div>
+				<div class="num-pagination">
+					<span id="active-num"></span>/<span id="all-num"></span>
+				</div>
+			</div>
+			<div class="product_brief">
+				<div class="price">￥${commodity.commodity_price!}</div>
+				<div class="title">${commodity.commodity_title!}</div>
+				<#if count == 0>
+				<div class="zan" id="collect_status" onClick="collect();">收藏</div>
+				<#else>
+				<div class="zan zan_on" id="collect_status" onClick="collect();">收藏</div>
+				</#if>
+				<!--添加删除 zan_on 样式，切换效果-->
+			</div>
+			<div class="product_mod">
+				<h3 class="headline">款式</h3>
+				<div class="product_attr">
+					<dl>
+						<dd>
+							<div class="style" id="divVersion">
+								<#list commodityVersionList as b > 
+								<#if b.version_stock == 0 >
+								   <span name="${b.id!}">${b.version_type!}</span>
+									<#else>
+									<span name="${b.id!}"
+									onclick="changPic('${b.id!}',this,'${b.version_stock!}');">${b.version_type!}</span>
+									</#if>
+								</#list>
+							</div>
+						</dd>
+					</dl>
+				</div>
+			</div>
+			<div class="product_mod" id="stock">
+			</div>
+			<div class="product_mod">
+				<h3 class="headline t .headline t2">图文详情</h3>
+				<div class="detail c">
+					<div class="text">${commodity.commodity_desc!}</div>
+				</div>
+			</div>
+          <div class="product_mod">
+            <h3 class="headline t"><span>${total_num!}</span>商品评价</h3>
+			<div class="comment_list c" style="display:none;" id="comment_list">
+			</div>				
+		</div>
+	</div>
+	<div class="backhome">
+		<a href="${ctx}/home/homePage"><img src="${ctx}/resource/images/homePage.png?2016071619" ></a>
+	</div>
+	<div class="shopping shopping_state" id="shoppindDiv">
+		<img src="${ctx}/resource/images/icon_shopping.png?2016071619" onclick="carForward();" class="rotate">
+	</div>
+	<div class="top">
+		<a href="javascript:scroll(0,0)"><img src="${ctx}/resource/images/icon_zd.png"></a>
+	</div>
+		<div class="footer">
+			<div class="product_attr" style="display:none;" id="divBuy">
+				<img src="${ctx}/resource/images/btn_close.png" class="btn_close">
+				<div class="price">￥${commodity.commodity_price!}</div>
+				<div class="title">${commodity.commodity_title!}</div>
+				<dl>
+					<dt>数量：</dt>
+					<dd>
+						<div class="style">
+							<i class="btn_count min">-</i><input type="text" id="num"
+								value="1" class="ipt"><i class="btn_count add">+</i>
+						</div>
+					</dd>
+				</dl>
+				<a href="javascript:void(0);" class="btn btn_red btn_next"
+					onclick="forwardOrderConfirm();">确 定</a>
+			</div>
+			<div class="btn_group">
+			<#if commodity.commodity_category == '04'>
+					<span class="btn btn_red btn_buy" style="margin: 0 5px 0 5px">立即购买</span>
+			<#else>
+				<div class="g2">
+					<span class="btn btn_red btn_buy">立即购买</span>
+				</div>
+				<div class="g2">
+					<span class="btn" id="joinCar">加入购物车</span>
+				</div>
+			</#if>
+			</div>
+		</div>
+
+	</div>
+	<div class="mask"></div>
+	<script type="text/javascript">
+$(function(){
+var buy_type="";
+<#if car_size != 0 >
+$("#shoppindDiv").show();
+	</#if>
+	<#if commodityContentList?? >
+	var htmlStr="";
+	<#list commodityContentList as c>
+	htmlStr+="<div class='item'>";
+	htmlStr+="<div class='time'>${c.content_date!}</div>";
+	<#if c.user_logo??>
+	htmlStr+="<img src='${c.user_logo!}' class='face'>";
+	<#else>
+	htmlStr+="<img src='' class='face'>";
+	</#if>
+	var user_name="${c.user_name!}";
+	user_name=decodeURI(user_name);
+	htmlStr+="<div class='name'>"+user_name+"</div>";
+	htmlStr+="<div class='desc'>${c.commodity_content!}</div>";
+	htmlStr+="<div class='attr'>型号： ${c.version_type!}</div>";
+	htmlStr+="<div class='show'>";
+	<#if c.commodity_logo??>
+		htmlStr+="<img src='${server_uri!}${c.commodity_logo!}' class='pic'>";
+						<#else>
+		htmlStr+="<img src='' class='pic'>";
+						</#if>
+			htmlStr+="</div>";			
+			htmlStr+="</div>";			
+				</#list>
+				<#if commodityContentPageNumber lt commodityContentTotalPage>
+				htmlStr+="<li id='pageNum1' style='text-align: center;'><div onclick='nextPage1(${commodityContentPageNumber},'${commodity.id!}'); return false;'><span class='more'>更多<span class='arrow1'></span><span class='arrow2'></span></span></div></li>";
+				</#if>
+			$("#comment_list").html(htmlStr);
+			</#if>
+			$("#stock").html("<h3 class='headline'>库存："+${version_stock!}+"</h3>");
+		//浏览
+		$.post("${ctx}/home/browseCommodity",{
+			id:"${commodity.id!}",
+			commodity_type:"01"
+			},function(json){
+		},'json');
+		
+		//收藏或者取消收藏
+		collect = function() {
+		$.post("${ctx}/home/collectCommodity",{
+		    commodity_type:"01",
+			id:"${commodity.id!}"
+		},function(json){
+		  if(json.code == "0"){
+			$("#collect_status").attr("class","zan zan_on");
+			}else{
+			$("#collect_status").attr("class","zan");
+			}
+		},'json');
+		}
+			//滑动图片
+	var swiperH = new Swiper('.swiper', {
+		onInit: function(swiper){
+			document.getElementById("active-num").innerHTML=swiper.activeIndex+1;
+			document.getElementById("all-num").innerHTML=swiper.slides.length;
+		},
+		onSlideChangeEnd: function(swiper){
+			document.getElementById("active-num").innerHTML=swiper.activeIndex+1;
+		}
+	});
+		//切换轮播图片
+		changPic = function(version_id,obj,version_stock) {
+		$("#divVersion span").attr("class","");
+		$(obj).attr("class","on");
+		$("#stock").html("<h3 class='headline'>库存："+version_stock+"</h3>");
+		$.post("${ctx}/home/changeVersionPic",{
+			id:"${commodity.id!}",
+			version_id:version_id
+		},function(json){
+		var list=json.versionExtList;
+		var server_uri=json.server_uri;
+		var htm="";
+		for(var i in list){
+		htm+="<div class='swiper-slide'><img src='"+server_uri+""+list[i].ext_url+"' class='pic'></div>";
+		}
+		document.getElementById("all-num").innerHTML=list.length;
+		document.getElementById("active-num").innerHTML=1;
+	//$("#swiperWrapper").html(htm);
+		$(".swiper .pic").height($(".page").width()*450/640);
+		swiperH.removeAllSlides();
+		swiperH.appendSlide(htm);
+		swiperH.activeIndex=0;
+		},'json');
+		}
+		
+		$("#divVersion span").each(function(index){
+		if(index==0){
+			$(this).attr("class","on");
+		}
+	});
+	
+	
+	//滑动图片尺寸
+	$(".swiper .pic").height($(".page").width()*450/640)
+	//内容隐藏显示切换
+	$(".product_mod .t").click(function(){
+		$(this).toggleClass(".headline t2")
+		$(this).siblings(".c").toggle();
+	})
+	//加减计算
+	var tabEnterTime = 0;
+$(".add").on("touchstart mousedown", function(e) {
+  e.stopPropagation()
+  e.preventDefault()
+  tabEnterTime = Date.now();
+}).on("touchend mouseup", function() {
+  if (Date.now() - tabEnterTime < 1000) {
+    var t=$(this).parent().find('input[class*=ipt]'); 
+    t.val(parseInt(t.val())+1) 
+  }
+})
+
+$(".min").on("touchstart mousedown", function(e) {
+  e.stopPropagation()
+  e.preventDefault()
+  tabEnterTime = Date.now();
+}).on("touchend mouseup", function() {
+  if (Date.now() - tabEnterTime < 1000) {
+    var t=$(this).parent().find('input[class*=ipt]'); 
+    t.val(parseInt(t.val())-1) 
+    if(parseInt(t.val())<0){ 
+      t.val(0); 
+    } 
+  }
+})
+
+	//购买弹出框
+	$(".btn_buy").click(function(){
+		$("#divBuy").show();
+		$(".footer .btn_group").hide();
+		$(".mask").show();
+		$(".mask").css({"z-index":"888"});
+		//$(".mask").css({"background":"rgba(0, 0, 0, 0)"});
+		buy_type="02";
+	})
+	$("#joinCar").click(function(){
+		$("#divBuy").show();
+		$(".footer .btn_group").hide();
+		$(".mask").show();
+		$(".mask").css({"z-index":"888"});
+		buy_type="01";
+	})
+	$(".btn_close").click(function(){
+		$("#divBuy").hide();
+		$(".footer .btn_group").show();
+		$(".mask").hide();
+		$(".mask").css({"z-index":"1000"})
+	})
+	$(".mask").click(function(){
+		$("#divBuy").hide();
+		$(".footer .btn_group").show();
+		$(".mask").hide();
+		$(".mask").css({"z-index":"1000"})
+	})
+	//跳转到订单确认页面
+	forwardOrderConfirm = function() {
+	    var version_id="";
+	    if($("#divVersion span.on").length > 0){
+		version_id=$("#divVersion span.on")[0].attributes[0].nodeValue;
+		}
+		if(version_id=='' || version_id==undefined || version_id==null){
+		   dialog('#ok',3000,"请选择一种商品款式");
+		   return;
+           }
+		var countNum=$("#num").val();
+		if(buy_type=="02"){
+			window.location.href="${ctx}/pay/forwardConfirm?id=${commodity.id!}&price=${commodity.commodity_price!}&commodity_type=01&type="+buy_type+"&version_id="+version_id+"&countNum="+countNum;
+		}else{
+		$.post("${ctx}/pay/forwardConfirm?id=${commodity.id!}&price=${commodity.commodity_price!}&commodity_type=01",{
+		type:buy_type,
+		version_id:version_id,
+		countNum:countNum
+		},function(json){
+		$("#divBuy").hide();
+		$(".footer .btn_group").show();
+		$(".mask").hide();
+		$(".mask").css({"z-index":"1000"})
+		if(json.code=="0"){
+		$("#shoppindDiv").show();
+		dialog('#ok',3000,json.msg);
+		}else{
+		dialog('#ok',3000,json.msg);
+		}
+		},'json');
+		}
+		}
+		
+		nextPage1 = function(pnum,commodity_id){
+		$("#pageNum1").remove();
+		$.post("${ctx}/home/commodityContentPage",{
+			page:pnum+1,
+			commodity_id:commodity_id
+			},function(json){
+				var htm="";
+				var list=json.list;
+				for(var i in list){
+				            htm+="<div class='item'>";
+				            var content_date=(list[i].content_date == null)?"":list[i].content_date;
+						    htm+="<div class='time'>"+content_date+"</div>";
+						    var user_logo=(list[i].user_logo == null)?"":list[i].user_logo;
+						    htm+="<img src="+user_logo+" class='face'>";
+						    var user_name=(list[i].user_name == null)?"":list[i].user_name;
+						    user_name=decodeURI(user_name);
+						    htm+="<div class='name'>"+user_name+"</div>";
+						    var commodity_content=(list[i].commodity_content == null)?"":list[i].commodity_content;
+						    htm+="<div class='desc'>"+commodity_content+"</div>";
+						    var version_type=(list[i].version_type == null)?"":list[i].version_type;
+						    htm+="<div class='attr'>"+version_type+"</div>";
+						    htm+="<div class='show'>";
+						    if(list[i].commodity_logo && list[i].commodity_logo !=null && list[i].commodity_logo!=""){
+						
+							htm+="<img src='${server_uri!}"+list[i].commodity_logo+"' class='pic'>";
+						}else{
+							htm+="<img src='' class='pic'>";
+						}
+						
+						htm+="</div>";
+						htm+="</div>";
+				}
+				if(json.pageNumber < json.totalPage){
+					htm+="<li id='pageNum1' style='text-align: center;'><div onclick='nextPage1("+json.pageNumber+",'${commodity.id!}'); return false;'><span class='more'>更多<span class='arrow1'></span><span class='arrow2'></span></span></div></li>";
+				}
+				$("#comment_list").append(htm);
+		},'json');
+	}
+	carForward=function(){
+			  window.location.href="${ctx}/car/carList";
+			  }
+	
+})
+$(window).scroll(function(){
+	var scrollTop =$(this).scrollTop();//滚动高度
+	if(scrollTop>=200){//到达底部加载内容
+	    $(".top").css("display","block");
+	}
+	else{
+		$(".top").css("display","none");
+	}
+});
+</script>
+</body>
+</html>

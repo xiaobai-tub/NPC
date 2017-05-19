@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+<#include "include/header.html"/>
+<body>
+<div class="comments_div">
+		<strong>宝贝评价</strong>
+	</div>
+	<div align="center" class="comments_textarea">
+		<textarea id="babyComment" name="babyComment" rows="5" placeholder="请输入您的宝贝评价........"></textarea>
+	</div>
+<input type="button" class="btn btn_red btn_buy" onclick="submit();" value="提交评价">
+<script type="text/javascript">
+$(function(){
+ $(".addr_list .item").swipe({
+		swipe:function(event, direction, distance, duration, fingerCount) {
+			if(direction == "left"){
+				$(this).addClass("on")
+			}else if(direction == "right"){
+				$(this).removeClass("on")
+			}
+		}
+	});
+	//提交评价
+	submit = function(){
+		 var commodity_content = $("#babyComment").val();
+		 if(commodity_content == "" || commodity_content == null){
+		 dialog('#ok',3000,"请输入您的宝贝评价");
+		 return;
+		 }
+		 $.post("${ctx}/mine/submitCommodityContent",{
+			 commodity_id:"${mId!}",
+			 id:"${id!}",
+			 total_id:"${totalId!}",
+			 commodity_content:commodity_content
+				},function(json){
+					if(json.code==0){
+						window.location.href="${ctx}/mine/orderDetails?order_status="+"${order_status!}"+"&type=1";
+					}else{
+					   dialog('#ok',3000,json.msg);
+					}
+					
+			},'json'); 
+		
+	};
+})
+</script>
+</body>
+</html>

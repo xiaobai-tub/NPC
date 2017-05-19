@@ -1,0 +1,235 @@
+/* 
+* @Author: anchen
+* @Date:   2016-10-25 10:49:00
+* @Last Modified by:   anchen
+* @Last Modified time: 2016-10-25 19:18:43
+*/
+.wrap {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    background: url('../img/bacpic.png');
+}
+@media screen and (min-width: 768px) {
+.wrap {
+  width: 750px;
+  margin: 0 auto; } }
+.title {
+    position: absolute;
+    top: 56px;
+    left: 70px;
+    width: 609px;
+    height: 178px;
+    background: url('../img/title.png');
+    z-index: 1;
+    /*background-size: 100%;*/
+}
+.bigpic {
+    position: absolute;
+    top: 210px;
+    left: 45px;
+    width: 691px;
+    height: calc(100% - 178px - 500px);
+    background: url('../img/monstergroup.png') center top no-repeat; 
+    background-size: contain;
+}
+.info {
+    position: absolute;
+    bottom: 130px;
+    left: 90px;
+    width: 566px;
+    height: 363px;
+}
+.info div {
+    width: 516px;
+    height: 32px;
+    border-radius: 10px;
+    padding: 25px;
+    margin-bottom: 10px;
+    background-color: #a30e15;
+} 
+.info div span {
+    float: left;
+    width: 110px;
+    height: 100%;
+    line-height: 32px;
+    font-family: "黑体";
+    font-weight: bold;
+    font-size: 30px;
+    color: white;
+}
+.info div input {
+    float: left;
+    width: 400px;
+    height: 100%;
+    font-size: 24px;
+    line-height: 32px;
+    border: 0;
+    outline: medium;
+    background-color: #a30e15;
+}
+.info .monsternum span {
+    width: 200px;
+    height: 100%;
+}
+.info .monsternum input {
+    width: 300px;
+    height: 100%;
+}
+.btn {
+    position: absolute;
+    bottom: 20px;
+    left: 198px;
+    width: 355px;
+    height: 85px;
+    background: url("../img/button.png");
+}
+.mengban {
+    display: none;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.3);
+    z-index: 10;
+}
+.tip {
+    position: absolute;
+    bottom: 140px;
+    left: 40px;
+    width: 668px;
+    height: 344px;
+    background: url("../img/tip.png");
+}
+.tip h2 {
+    width: 100%;
+    height: 40px;
+    margin: 110px 0 35px 0;
+    font-family: '黑体';
+    font-size: 34px;
+    text-align: center;
+    line-height: 40px;
+    color: #fff;
+}
+.tip span {
+    display: block;
+    width: 100%;
+    height: 40px;
+    font-family: '黑体';
+    font-size: 34px;
+    text-align: center;
+    line-height: 40px;
+    color: #fff;
+}
+.mengban2 {
+    display: none;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.3);
+    z-index: 10;
+}
+.certificate {
+    position: absolute;
+    top: 65px;
+    left: 45px;
+    width: 653px;
+    height: 850px;
+    background: url('../img/certificate.png');
+    background-size: 100% 100%;
+}
+.certificate h2 {
+    position: absolute;
+    top: 170px;
+    left: 45px;
+    width: 560px;
+    height: 160px;
+    font-size: 40px;
+    text-align: center;
+    color: #fff;
+}
+.update {
+    position: absolute;
+    bottom: 120px;
+    left: 180px;
+    width: 290px;
+    height: 335px;
+    border-radius: 10px;
+    -webkit-border-radius: 10px;
+    background-color: #fff;
+}
+.update label {
+    position: absolute;
+    top: 0;
+    left: 0;
+    display: block;
+    width: 100%;
+    height: 100%;
+    border-radius: 10px;
+    -webkit-border-radius: 10px;
+    background-color: #fff;
+}
+.update label span {
+    position: absolute;
+    top: 115px;
+    left: 105px;
+    width: 80px;
+    height: 80px;
+    background: url('../img/updatefile.png');
+    z-index: 10;
+}
+.update label img {
+    position: absolute;
+    top: 0;
+    left: 0;
+    display: block;
+    width: 100%;
+    height: 100%;
+    border-radius: 10px;
+    -webkit-border-radius: 10px;
+}
+
+.update input {
+    width: 100%;
+    height: 100%;
+    border-radius: 10px;
+    -webkit-border-radius: 10px;
+    border: 0;
+    outline: medium;
+} 
+.close {
+    position: absolute;
+    top: 40px;
+    right: 30px;
+    width: 42px;
+    height: 42px;
+    background: url("../img/close.png") no-repeat;
+}
+.pickup {
+    position: absolute;
+    top: 930px;
+    left: 190px;
+    width: 355px;
+    height: 80px;
+    background: url('../img/pickup.png');
+}
+.loading {
+    display: none;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.7);
+}
+.loading img {
+    position: absolute;
+    top: 30%;
+    left: 16%;
+    width: 500px;
+    height: 500px;
+    z-index: 10;
+}

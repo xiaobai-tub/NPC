@@ -1,0 +1,1 @@
+mvn install:install-file -Dfile=jfinal_weixin_1.5-SNAPSHOT.jar -Dpackaging=jar -DgroupId=com.jfinal -DartifactId=jfinal-weixin -Dversion=1.5-SNAPSHOT

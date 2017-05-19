@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html>
+<#include "include/header.html"/>
+<body>
+<div class="page">
+	<div class="content m">
+		<div class="user_info">
+			<img src="${opUser.head_path!}" class="face">
+			<div class="name" id="name" >${opUser.nick_name!}</div>
+			<div class="name">账户:${opUser.amount_money!}</div>
+			
+		</div>
+		<div class="menu_link2">
+			<a href="javascript:void(0);" class="item" onclick="commodityCollection(); return false;"><span>${countpcc!}</span>商品收藏</a>
+			<a href="javascript:void(0);" class="item" onclick="browseRecord(); return false;"><span>${countpcr!}</span>浏览记录</a>
+		</div>
+		<div class="menu_link3">
+			<a href="#" class="menu_t" onclick="orderDetails('','1'); return false;"><span>全部订单</span> 我的订单</a>
+			<#if countDfk == 0>
+			<a href="#" class="item" onclick="orderDetails('01','1'); return false;"><img src="${ctx}/resource/images/icon_dfk.png" class="icon">待付款</a>
+			<#else>
+			<a href="#" class="item" onclick="orderDetails('01','1'); return false;"><img src="${ctx}/resource/images/icon_dfk.png" class="icon"><span>${countDfk!}</span>待付款</a>
+			</#if>
+			<#if countDfh == 0>
+			<a href="#" class="item" onclick="orderDetails('02','1'); return false;"><img src="${ctx}/resource/images/icon_dfh.png" class="icon">待发货</a>
+			<#else>
+			<a href="#" class="item" onclick="orderDetails('02','1'); return false;"><img src="${ctx}/resource/images/icon_dfh.png" class="icon"><span>${countDfh!}</span>待发货</a>
+			</#if>
+			<#if countDsk == 0>
+			<a href="#" class="item" onclick="orderDetails('03','1'); return false;"><img src="${ctx}/resource/images/icon_dsh.png" class="icon">待收货</a>
+			<#else>
+			<a href="#" class="item" onclick="orderDetails('03','1'); return false;"><img src="${ctx}/resource/images/icon_dsh.png" class="icon"><span>${countDsk!}</span>待收货</a>
+			</#if>
+			<#if countDpj == 0>
+			<a href="#" class="item" onclick="orderDetails('08','1'); return false;"><img src="${ctx}/resource/images/icon_pj.png" class="icon">待评价</a>
+			<#else>
+			<a href="#" class="item" onclick="orderDetails('08','1'); return false;"><img src="${ctx}/resource/images/icon_pj.png" class="icon"><span>${countDpj!}</span>待评价</a>
+			</#if>
+		</div>
+		<!-- <div class="menu_link4"  ">
+			<a href="#" class="menu_t" onclick="MyOneBuy('','','1'); return false;"><span>全部清单</span> 我的一元购</a>
+			<a href="#" class="item" onclick="MyOneBuy('','','1'); return false;"><span>${countIndiana!}</span>夺宝记录</a>
+			<a href="#" class="item" onclick="MyOneBuy('02','','1'); return false;"><span>${countReward!}</span>中奖记录</a>
+			<a href="#" class="item" onclick="MyOneBuy('','01','1'); return false;"><span>${countConduct!}</span>进行中</a>
+			<a href="#" class="item" onclick="MyOneBuy('','02','1'); return false;"><span>${countNoAnnounced!}</span>待揭晓</a>
+			<a href="#" class="item" onclick="MyOneBuy('','03','1'); return false;"><span>${countAnnounced!}</span>已揭晓</a>
+		</div> -->
+		<div class="menu_link">
+			<a href="javascript:void(0);" class="item" onclick="myTicket(); return false;">我的卡券</a>
+		</div>
+		<div class="menu_link">
+			<a href="javascript:void(0);" class="item" onclick="getAddr(); return false;">地址管理</a>
+		</div>
+	</div>
+</div>
+<script type="text/javascript">
+$(function(){
+var nick_name="${opUser.nick_name!}";
+$("#name").html(decodeURI(nick_name));
+ $("#a_my").attr("href","${ctx}/mine/MineInformation");
+ $("#a_car").attr("href","${ctx}/car/carList");
+ $("#a_shop").attr("href","${ctx}/home/homePage");
+ getAddr=function(){
+		 window.location.href="${ctx}/mine/getAddr";
+ }
+ commodityCollection=function(){
+	 	window.location.href="${ctx}/mine/commodityCollection";
+}
+ browseRecord=function(){
+	 	window.location.href="${ctx}/mine/browseRecord";
+ }
+ MyOneBuy=function(is_win,status,type){
+	 	window.location.href="${ctx}/mine/MyOneBuy?is_win="+is_win+"&status="+status+"&type="+type;
+ }
+ orderDetails=function(order_status,type){
+	 window.location.href="${ctx}/mine/orderDetails?order_status="+order_status+"&type="+type;
+}
+ myTicket=function(){
+	 window.location.href="${ctx}/mine/myTicket";
+}
+})
+</script>
+<#include "include/foot.html"/>
+</body>
+</html>

@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html>
+<#include "include/header.html"/>
+<script>
+$(function(){
+	//内容隐藏显示切换
+	$(".formula_ab .switch").click(function(){
+		$(this).toggleClass("on")
+		$(this).siblings(".mod").toggle();
+	})
+})
+</script>
+<body>
+<div class="page">
+	<div class="content">
+		<div class="formula">
+			<div class="title">计算公式</div>
+			<div class="desc">【（数值A+数值B）/商品所需人数】取余数+10000001</div>
+		</div>
+		
+		<div class="formula_ab">
+			<div class="item">
+				<div class="title">数值A</div>
+				<div class="desc">
+					=截止该商品开奖时间与前后20条该商品记录<br>
+					=
+					<#if total_time_sum !=0 >
+					<span class="red">${total_time_sum!}</span>
+					</#if>
+				</div>
+				<div class="switch"><span>展开↓</span> <span>关闭↑</span></div>
+				<div class="mod" id="a_mod">
+				</div>
+			</div>
+			<div class="item">
+				<div class="title">数值B</div>
+				<#if timeSlot.status == "02" >
+				<div class="desc">
+					=截止该商品开奖时间网易彩票开奖结果<br>
+					=<span class="red">正在等待开奖</span><a href="http://caipiao.163.com/award/cqssc/${currenDate!}.html" class="blue">开奖查阅</a>
+				</div>
+				<#else>
+				<div class="desc">
+					=截止该商品开奖时间网易彩票开奖结果<br>
+					=<span class="red">${timeSlot.lottery_num!}</span>（${timeSlot.period!}）<a href="http://caipiao.163.com/award/cqssc/${timeSlot.caipiao_period!}.html" class="blue">开奖查阅</a>
+				</div>
+				</#if>
+				<div class="switch"><span>展开↓</span> <span>关闭↑</span></div>
+				<div class="mod" id="b_mod">
+				</div>
+			</div>
+		</div>
+				
+		<div class="formula_result">
+			<div class="title">计算结果</div>
+			<#if timeSlot.status == "02" >
+				<div class="desc">幸运号码：<span class="red">等待揭晓</span></div>
+				<#else>
+				<div class="desc">幸运号码：<span class="red">${timeSlot.lucky_num!}</span></div>
+				</#if>
+			
+		</div>
+	</div>
+</div>
+<script type="text/javascript">
+$(function(){
+<#if onepurchaseBuyList?? >
+var htmlStr="<table>";
+htmlStr+="<tr>";
+htmlStr+="<td>夺宝时间</td>";
+htmlStr+="<td>用户账号</td>";
+htmlStr+="<tr>";
+<#list onepurchaseBuyList as a >
+htmlStr+="<tr>";
+htmlStr+="<td>${a.indiana_time!}<span class='red'>→${a.timeNum!}</span></td>";
+var nick_name="${a.nick_name!}";
+nick_name=decodeURI(nick_name);
+htmlStr+="<td>"+nick_name+"</td>";
+htmlStr+="<tr>";
+</#list>
+htmlStr+="</table>";
+$("#b_mod").html(htmlStr);
+$("#a_mod").html(htmlStr);
+</#if>
+						
+})
+</script>
+</body>
+</html>

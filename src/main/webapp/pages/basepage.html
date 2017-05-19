@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=750, user-scalable=no, target-densitydpi=device-dpi">
+		<meta name="screen-orientation" content="portrait">
+		<meta name="x5-orientation" content="portrait">
+		<meta name="format-detection" content="telephone=no">
+		<meta name="apple-mobile-web-app-capable" content="yes" />
+        <title>闽南异兽招行卡活动</title>
+        <link rel="stylesheet" type="text/css" href="${ctx}/resource/monster/css/reset.css" />
+        <link rel="stylesheet" type="text/css" href="${ctx}/resource/monster/css/basepage.css?v0.01" />
+        <link rel="stylesheet" type="text/css" href="${ctx}/resource/monster/css/LUploader.css" />
+    </head>
+    <body>
+        <div class="wrap clearfix">
+            <div class="title"></div>
+            <div class="bigpic"></div>
+            <div class="info">
+             <#if checkCookie??>
+            	 <div class="name">
+                    <span>姓  名:</span>
+                   
+                    <input type="text" id="user_name" placeholder="必填" value="${checkCookie.user_name!}" />
+                </div>
+                <div class="id">
+                    <span>身份证:</span>
+                    <input type="text" id="id_card" placeholder="必填" value="${checkCookie.id_card!}" />
+                </div>
+                <div class="phone">
+                    <span>手机号:</span>
+                    <input type="text" id="telephone" placeholder="必填" value="${checkCookie.telephone!}" />
+                </div>
+                <div class="monsternum">
+                    <span>招商异兽卡号:</span>
+                    <input type="text" id="zh_card_no" placeholder="输入卡号即得300元红包" value="${checkCookie.zh_card_no!}" />
+                </div>
+             <#else>
+            	 <div class="name">
+                    <span>姓  名:</span>
+                   
+                    <input type="text" id="user_name" placeholder="必填" />
+                </div>
+                <div class="id">
+                    <span>身份证:</span>
+                    <input type="text" id="id_card" placeholder="必填" />
+                </div>
+                <div class="phone">
+                    <span>手机号:</span>
+                    <input type="text" id="telephone" placeholder="必填"/>
+                </div>
+                <div class="monsternum">
+                    <span>招商异兽卡号:</span>
+                    <input type="text" id="zh_card_no" placeholder="输入卡号可领300元红包券"/>
+                </div>
+             </#if>
+            </div>
+            <div class="btn" onclick="zhUser()"></div>
+            <div class="mengban">
+                <div class="tip">
+                    <h2 id="msg">您的身份证已被使用</h2>
+                    <span id="msg_fu">请确认重新输入</span>
+                </div>
+            </div>
+            <div class="mengban2">
+                <div class="certificate">
+                    <span class="close"></span>
+                    <h2>
+                        广电用户请上传广电受理单
+                        作为领奖凭证
+                        其他用户请上传招行异兽卡照片
+                    </h2>
+                    <div class="update">
+                        <label for="updatefile">
+                            <span id="spanImage"></span>
+                             <img src="" id="imgSrc" alt="" />
+                        </label>
+                        <div class="LUploader upload" id="demo1" >
+					        <div class="LUploader-container">
+						            <input data-LUploader='demo1' id="updatefile" data-form-file='basestr'   type="file" />
+						            <ul class="LUploader-list"></ul>
+						        </div>
+					        <div>
+						            <div class="icon icon-camera font20"></div>
+						            <p></p>
+						        </div>
+					    </div>
+                    </div>
+                </div>
+                <!-- <a href="${ctx}/member/forwardZhCommodity" class="pickup"></a> -->
+               <!--  <button class="pickup" onclick="forwardCommodity();"></button> -->
+            </div>
+            <div class="loading">
+                <img src="${ctx}/resource/monster/img/loading.gif" alt="" />
+            </div>
+        </div>
+    </body>
+    <script type="text/javascript" src="${ctx}/resource/js/jquery-2.1.4.min.js"></script>
+    <script type="text/javascript" src="${ctx}/resource/js/LUploader.js?v0.01"></script>
+    <script type="text/javascript">
+    $(function(){
+    	[].slice.call(document.querySelectorAll('input[data-LUploader]')).forEach(function(el) {
+            new LUploader(el, {
+                url: "${ctx}"+'/member/photoUpload',//post请求地址
+                multiple: false,//是否一次上传多个文件 默认false
+                maxsize: 102400,//忽略压缩操作的文件体积上限 默认100kb
+                accept: 'image/*',//可上传的图片类型
+                quality: 0.1,//压缩比 默认0.1  范围0.1-1.0 越小压缩率越大
+                showsize:false//是否显示原始文件大小 默认false
+            });
+        });
+    })
+    
+    function previewFile() {
+    	  $('.update span').css({
+             display: 'none'
+          })
+    	  var preview = $("#imgSrc")[0];
+    	  var file = $("#updatefile")[0].files[0];
+    	  var reader  = new FileReader();
+
+    	  reader.addEventListener("load", function () {
+    	    preview.src = reader.result;
+    	    
+    	  }, false);
+
+    	  if (file) {
+    	    reader.readAsDataURL(file);
+    	  }
+    }
+    function forwardCommodity(){
+    	/* $('.mengban2').css({
+            display: 'none'
+        })
+        var file = $("#updatefile")[0].files[0];
+    	if(file=='' || file==undefined || file==null ){
+    		$("#msg").html("请选择凭证");
+			tipWindow();
+			$('.btn').css({
+   		     display: 'block'
+   			})
+			return;
+    	} 
+    	$('.loading').css({
+ 	        display: 'block'
+ 	    })
+       var imgSrc = $("#imgSrc")[0].src;
+    	alert(imgSrc.substring(0,50));
+       var unicode= encodeURIComponent(imgSrc);
+       alert(unicode.substring(0,50));
+   	   $.ajax({
+	   		async: false,
+	   		type:"POST",
+			url:"${ctx}/member/photoUpload",
+			data:{
+				imageSrc: unicode
+			},
+			success : function(json){
+				if (json.code ==0) {
+					window.location.href="${ctx}/member/forwardZhCommodity";
+				}
+			}
+   		}); */
+    	window.location.href="${ctx}/member/forwardZhCommodity";
+    }
+    function zhUser(){
+      	var user_name = $("#user_name").val();
+      	var id_card = $("#id_card").val();
+      	var telephone = $("#telephone").val();
+      	var zh_card_no = $("#zh_card_no").val();
+      	if(user_name=='' || user_name==undefined || user_name==null ){
+      		$("#msg").html("姓名不能为空");
+      		tipWindow();
+      		return;
+    	}
+      	if(id_card=='' || id_card==undefined || id_card==null ){
+      		$("#msg").html("身份证不能为空");
+      		tipWindow();
+      		return;
+    	}
+      	if( telephone=='' || telephone==undefined || telephone==null ){
+      		$("#msg").html("手机号不能为空");
+      		tipWindow();
+      		return;
+    	}
+      	if(id_card.length<18){
+      		$("#msg").html("身份证错误");
+      		tipWindow();
+      		return;
+      	}
+      	if(telephone.length<11){
+      		$("#msg").html("手机号错误");
+      		tipWindow();
+      		return;
+      	}
+      	$.ajax({
+    		type:"POST",
+    		async : false,	
+    		url:"${ctx}/member/zhUser",
+    		data:{
+    			"user_name":user_name,
+    			"id_card":id_card,
+    			"telephone":telephone,
+    			"zh_card_no":zh_card_no
+    					},
+    		success : function(json){
+    			 if(json.code == 0 ){
+    				 $('.btn').css({
+    		             display: 'none'
+    		          })
+    				 certificate();
+    			 }else{
+    				 $("#msg").html(json.msg);
+    		      	 tipWindow();
+    			 }
+    		}
+    	}); 
+      }
+   	function certificate() {
+        $('.mengban2').css({
+            display: 'block'
+        })
+    }
+        var colorTrigle = document.getElementsByTagName('input');
+
+        $('.mengban').on('click', function(){
+            $('.mengban').css({
+                display: 'none'
+            })
+        })
+	    $('.close').on('click', function(){
+            $('.mengban2').css({
+                display: 'none'
+            })
+            $('.btn').css({
+    		     display: 'block'
+    		})
+        })
+        function colorChange() {          
+            for(var i = 0;i < colorTrigle.length;i++) {
+                colorTrigle[i].oninput = function(){
+                    $(this).css({
+                        backgroundColor: '#fff'
+                    })
+                    $(this).parent().css({
+                        backgroundColor: '#fff'
+                    })
+                    $(this).prev().css({
+                        color: '#000'
+                    })
+                    console.log($(this).val());
+                    if($(this).val() == "") {
+                        $(this).css({
+                        backgroundColor: '#a30e15'
+                        })
+                        $(this).parent().css({
+                            backgroundColor: '#a30e15'
+                        })
+                        $(this).prev().css({
+                            color: '#fff'
+                        })
+                    }
+                }
+            }
+        }colorChange();
+        function tipWindow() {
+            $('.mengban').css({
+                display: 'block'
+            })
+        }
+    </script>
+<div style="display:none;" >
+ <script src="https://s4.cnzz.com/z_stat.php?id=1259913599&web_id=1259913599" language="JavaScript" ></script>
+</div>
+</html>

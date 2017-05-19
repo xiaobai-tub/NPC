@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=750, user-scalable=no" />
+        <title>闽南异兽招行卡活动界面</title>
+        <link rel="stylesheet" type="text/css" href="${ctx}/resource/monster/css/reset.css" />
+        <link rel="stylesheet" type="text/css" href="${ctx}/resource/monster/css/vip.css?v0.02" />
+    </head>
+    <body>
+        <div class="wrap clearfix">
+     	    <div class="firework"></div>
+            <div class="vipwalfare" onclick="lingqu()"></div>
+            <div class="title"></div>
+            <div class="con clearfix">
+            <#list pcList as p>
+                <dl commodity_logo="${p.commodity_logo!}" commodity_name="${p.commodity_name!}" commodity_price="${p.commodity_price!}" version_stock="${p.version_stock!}" commodity_id="${p.id!}" onclick="getZhCommodity(this)">
+                    <dt>
+                        <img src="${server_uri!}${p.commodity_logo!}" alt="" />
+                    </dt>
+                    <dd>
+                        <h3>
+                            ${p.commodity_name!}
+                        </h3>
+                    </dd>
+                </dl>
+            </#list>
+            </div>
+            <div class="mengban1">
+                <div class="confirmprize">
+                    <div class="close"></div>
+                    <div class="prizepic" id="commodity_logo">
+                        <img src="${ctx}/resource/monster/img/prizepic.png" alt="" />
+                    </div>
+                    <div class="prizeinfo clearfix">
+                        <h2 class="describe" id="commodity_name">
+                            《半妖倾城》官方周边
+                            倾城明夏萌版贴纸
+                        </h2>
+                        <span class="price">售价:<em id="commodity_price">15.9</em></span>
+                        <span class="number">数量:<em id="version_stock">100</em></span>
+                    </div>
+                </div>
+                <div class="confirmbtn" id="subimg" onclick="submit();"></div>
+            </div>
+            <div class="mengban2">
+                <div class="congratulation">
+                    <!-- <div class="close"></div> -->
+                    <div class="congratitle"></div>
+                    <h2 id="msg">您成功领取了</h2>
+                    <h3 class="productinfo" id="msg_commodity_name">
+                        倾城明夏萌版贴纸
+                    </h3>
+                </div>
+                <a class="confirmbtn1" href="javascript:void(0);" onclick="forwardIndex()">确认</a>
+            </div>
+            <div class="mengban">
+                <div class="tip">
+                    <h2>SORRY</h2>
+                    <span id="tail-msg">领取失败</span>
+                    <a href="javascript:void(0);" onclick="forwardIndex()">确认</a>
+                </div>
+            </div>
+            <div class="mengban3">
+                <div class="giftpack">
+                    <div class="close"></div>
+                    <div class="gifttitle"></div>
+                    <div class="giftpic">
+                        <div>
+                            <img src="${ctx}/resource/monster/img/giftpic1.png" alt="" />
+                        </div>
+                        <div>
+                            <img src="${ctx}/resource/monster/img/giftpic2.png" alt="" />
+                        </div>
+                        <div>
+                            <img src="${ctx}/resource/monster/img/giftpic3.png" alt="" />
+                        </div>
+                        <div>
+                            <img src="${ctx}/resource/monster/img/giftpic4.png" alt="" />
+                        </div>
+                    </div>
+                    <span class="giftnumber">数量:<em id="num">${num!}</em></span>
+                </div>
+                <div class="giftbtn" id="conimg" onclick="confirm()"></div>
+            </div>
+        </div>
+    </body>
+    <script type="text/javascript" src="${ctx}/resource/js/jquery-2.1.4.min.js"></script>
+    <script type="text/javascript">
+    $('html').css({
+        overflow: 'auto',
+        '-webkit-overflow-scrolling': 'touch'
+    })
+    $('body').css({
+        overflow: 'auto',
+        '-webkit-overflow-scrolling': 'touch'
+    })
+    //领取商品
+    getZhCommodity=function(t){
+    	var commodity_name = $(t).attr("commodity_name");
+    	var commodity_logo = $(t).attr("commodity_logo");
+    	var commodity_price = $(t).attr("commodity_price");
+        var commodity_id = $(t).attr("commodity_id");
+        var version_stock = $(t).attr("version_stock");
+        var server_uri = "${server_uri!}";
+        $("#commodity_name").html(commodity_name);
+        $("#commodity_logo").html("<img src='"+server_uri+commodity_logo+"' alt='' />");
+        $("#commodity_price").html(commodity_price);
+        $("#version_stock").html(version_stock);
+  	    $('.mengban1').css({
+          display: 'block'
+        });
+  	  var topNum = Math.abs($('.wrap').offset().top);
+      if(topNum == 0) {
+          $('.confirmprize').css({
+              top: topNum + 60 + 'px'
+          })
+          $('.confirmbtn').css({
+              top: topNum + 1076 + 'px'
+          })
+          $('.confirmbtn1').css({
+              top: topNum + 830 + 'px'
+          })
+          $('.congratulation').css({
+              top: topNum + 300 + 'px'
+          })
+          $('.tip').css({
+              top: topNum + 300 + 'px'
+          })
+      }else {
+          $('.confirmprize').css({
+              top: topNum + 60 - 100 + 'px'
+          })
+          $('.confirmbtn').css({
+              top: topNum + 1076 - 100 + 'px'
+          })
+          $('.confirmbtn1').css({
+              top: topNum + 900 - 100 + 'px'
+          })
+          $('.congratulation').css({
+              top: topNum + 300 + 'px'
+          })
+          $('.tip').css({
+              top: topNum + 300 + 'px'
+          })
+      }
+
+  	    submit=function(){
+  	    $("#subimg").attr("disabled","disabled");
+  		$.ajax({
+  			async:false,
+  			type:"POST",
+  			url:"${ctx}/member/getZhCommodity",
+  			data:{
+  				"commodity_id":commodity_id
+  				},
+  			success : function(json){
+  				if(json.code == 0){
+  					$(t).attr("version_stock",json.num);
+  					$("#msg").html(json.msg);
+  	  				$("#msg_commodity_name").html(commodity_name);
+  	  				$('.mengban1').css({
+  	  	                display: 'none'
+  	  	           	})
+  	  	           	$('.mengban2').css({
+  	  	                display: 'block'
+  	  	           	})
+  	  	        	forwardIndex=function(){
+   	  	           	   window.location.href="${ctx}/member/forwardPinJu";
+   	  	            }
+  				}else{
+  					$('.mengban1').css({
+  	  	                display: 'none'
+  	  	           	});
+  					$("#tail-msg").html(json.msg);
+	  	            tipWindow();
+	  	            forwardIndex=function(){
+ 	  	           	   window.location.href="${ctx}/member/forwardZhMember";
+ 	  	            }
+  				}
+  				$("#submit").removeAttr("disabled"); 
+  			}
+  		});
+  	  }
+  	    
+  	}
+    //领取衣服
+    function lingqu(){
+    	$('.mengban3').css({
+            display: 'block'
+        });
+    	confirm=function(){
+      	    $("#conimg").attr("disabled","disabled");
+      		$.ajax({
+      			type:"POST",
+      			url:"${ctx}/member/getZhTshit",
+      			success : function(json){
+      				if(json.code == 0){
+      					$("#num").html(json.num);
+      					$("#msg").html(json.msg);
+      	  				$("#msg_commodity_name").html("129元礼包");
+      	  				$('.mengban3').css({
+      	  	                display: 'none'
+      	  	           	})
+      	  	            $('.congratulation').css({
+             			    top: 300 + 'px'
+       			   		})
+       			   		$('.confirmbtn1').css({
+				            top: 830 + 'px'
+				        })
+      	  	           	$('.mengban2').css({
+      	  	                display: 'block'
+      	  	           	})
+      	  	        	forwardIndex=function(){
+        	  	           	window.location.href="${ctx}/member/forwardPinJu";
+        	  	        }
+      				}else{
+      					$('.tip').css({
+               			  top: 300 + 'px'
+         			   	})
+      					$('.mengban3').css({
+      	  	                display: 'none'
+      	  	           	});
+      	  	            $("#tail-msg").html(json.msg);
+      	  	            tipWindow();
+      	  	            forwardIndex=function(){
+      	  	           	   window.location.href="${ctx}/member/forwardZhMember";
+      	  	            }
+      				}
+      				$("#conimg").removeAttr("disabled"); 
+      			}
+      		});
+    	}
+    }
+        $('.close').on('click', function(){
+            $('.vipwindow').css({
+                display: 'none'
+            })
+            $('.mengban1').css({
+                display: 'none'
+            })
+            $('.mengban2').css({
+                display: 'none'
+            })
+            $('.mengban3').css({
+                display: 'none'
+            })
+        })
+        function tipWindow() {
+            $('.mengban').css({
+                display: 'block'
+            })
+        }
+    </script>
+<div style="display:none;" >
+ <script src="https://s4.cnzz.com/z_stat.php?id=1259913599&web_id=1259913599" language="JavaScript" ></script>
+</div>
+</html>

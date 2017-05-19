@@ -1,0 +1,431 @@
+<!DOCTYPE html>
+<html>
+<#include "include/header.html"/>
+<body>
+<div class="page">
+	<div class="content m">
+		<!--没有商品-->
+		
+		<div class="tab_cc tab_c1 tab_state" id="div_noCar">
+		 <div class="nothing">购物车空空的</div>
+			      <div class="g3"><a class="btn btn_red btn_qd" href="${ctx}/home/homePage">去逛逛</a></div>
+		</div>
+		<!--商品-->
+		<div class="tab_c tab_c1 tab_state" id="div_car">
+			<div class="cart_list">
+				<div class="ctr" id="commodityCheck">
+					<div class="fl">
+						<div class="checkbox">
+							<input type="checkbox" name="r" id="r3" />
+							<label for="r3"></label>
+						</div>
+						<div class="checktxt">全选</div>
+					</div>
+					<div class="fr">
+						<span class="btn btn_orange btn_del" onClick="commodityDel();">删除</span>
+					</div>
+				</div>
+			<div id="commodity">
+			<#list commoditylist as cl>
+				<div class="item">
+					<div class="checkbox">
+						<input type="checkbox" name="r" id="${cl.id}" value="${cl.per_price!}" onclick="selCheck(this); "/>
+						<label for="${cl.id}"></label>
+					</div>
+					<#if cl.commodity_logo??>
+					<img src="${server_uri!}${cl.commodity_logo!}" class="pic">
+					<#else>
+					<img src="" class="pic">
+					</#if>
+					<div class="title">${cl.commodity_name!}</div>
+					<div class="price">￥${cl.per_price!}</div>
+					<div class="attr">型号:${cl.version_type!}</div>
+					<#if cl.buy_num??>
+					<div class="count">数量：<i class="btn_count min">-</i><input type="text" value="${cl.buy_num!}" class="ipt" readOnly="true"><i class="btn_count add">+</i></div>
+					<#else>
+					<div class="count">数量：<i class="btn_count min">-</i><input type="text" value="1" class="ipt"  readOnly="true"><i class="btn_count add">+</i></div>
+					</#if>
+				</div>
+			</#list>
+			</div>
+			<div class="btn_group tab_c tab_c1">
+			<div class="total" id="total_price" style="font-size:20px;">合计：￥<span class="red" id="spanTotalPrice">0</span></div>
+			<a href="javascript:void(0);" onClick="settlement()" class="btn btn_orange btn_submit">去结算(<span id="commodityNum">0</span>)</a>
+		</div>
+			</div>
+			
+		</div>
+		
+		<!--一元购-->
+		<div class="tab_c tab_c2" style="display:none;">
+			<div class="cart_list">
+			<div id="onebuys">
+			<#list onetylist as ol>
+				<div class="item">
+					<div class="checkbox">
+						<input type="checkbox" name="r2" id="${ol.id}" value="0.01" onclick="oneCheck(this);" />
+						<label for="${ol.id}"></label>
+					</div>
+					<#if ol.commodity_logo??>
+					<img src="${server_uri!}${ol.commodity_logo!}" class="pic">
+					<#else>
+					<img src="" class="pic">
+					</#if>
+					<div class="title">${ol.commodity_name!}</div>
+					<div class="attr">${ol.version_type!}</div>
+					<div class="need">总需${ol.total_count!}人次，剩余${ol.surplus_count!}人次</div>
+					<#if ol.buy_num??>
+					<div class="count">参与人次：<i class="btn_count min">-</i><input type="text" value="${ol.buy_num!}" class="ipt" readOnly="true"><i class="btn_count add">+</i></div>
+					<#else>
+					<div class="count">参与人次：<i class="btn_count min">-</i><input type="text" value="1" class="ipt" readOnly="true"><i class="btn_count add">+</i></div>
+					</#if>
+				</div>
+			</#list>
+			</div>
+			<#if (onetylist?size>0)>
+				<div class="ctr" id="onebuysCheck">
+					<div class="fl">
+						<div class="checkbox">
+							<input type="checkbox" name="r2" id="r6" />
+							<label for="r6"></label>
+						</div>
+						<div class="checktxt">全选</div>
+					</div>
+					<div class="fr">
+						<span class="btn btn_orange btn_del" onClick="onebuysDel();">删除</span>
+					</div>
+				</div>
+			</#if>
+			</div>	
+		</div>
+	</div>
+	
+</div>
+<div class="mask"></div>
+<!--弹出框-->
+<div class="dialog" id="confirm">
+	<div class="dialog_content">
+		<div class="alert">
+			<div class="desc">确定删除？</div>
+			<div class="ctr">
+				<div class="g2"><span class="btn btn_red btn_mini" onClick="dialogRight()">确定</span></div>
+				<div class="g2"><span class="btn btn_gray btn_mini" onClick="dialogClose()">取消</span></div>
+			</div>
+		</div>	
+	</div>
+</div>
+<script>
+$(function(){
+var diff="1";
+ $("#a_my").attr("href","${ctx}/mine/MineInformation");
+ $("#a_car").attr("href","${ctx}/car/carList");
+ $("#a_shop").attr("href","${ctx}/home/homePage");
+var oneCommodity="${oneCommodity}";
+<#if (commoditylist?size == 0)>
+$("#div_noCar").show();
+<#else>
+$("#div_car").show();
+</#if>
+if(oneCommodity=="on"){
+	diff=2;
+	var e=$("#yyg").data("tab");
+	$(".tab_c").hide();
+	$("."+e).show();
+	$(".tab_t .item").removeClass("on");
+	$("#yyg").addClass("on");
+}
+var i=0;
+var total_price=0;
+$('#commodityCheck input:checkbox').attr("checked",true);
+$('#commodity input:checkbox').each(function(){
+	var selectState=$(this).attr("checked",true);
+	var price=parseFloat($(this).val());
+	var textnum = parseInt($(this).parent().parent().find("input:text").val());
+	total_price = FloatAdd(total_price,FloatMul(price,textnum));
+	i++;
+});
+$("#spanTotalPrice").html(total_price);
+$("#commodityNum").html(i);	
+var j=0;
+var one_total_price=0;
+$('#onebuysCheck input:checkbox').attr("checked",true);
+$('#onebuys input:checkbox').each(function(){
+	var selectState=$(this).attr("checked",true);
+	var price=parseFloat($(this).val());
+	var textnum = parseInt($(this).parent().parent().find("input:text").val());
+	one_total_price = FloatAdd(one_total_price,FloatMul(price,textnum));
+	j++;
+});
+$("#oneTotalPrice").html(one_total_price);
+$("#spanHow").html(j);
+$("#onebuysNum").html(j);
+	//tab标签
+		$(".tab_t .item").click(function(){
+			var ele = $(this).data("tab");
+			if(ele=="tab_c1"){
+				diff=1;
+			}else{
+				diff=2;
+			}
+			$(".tab_c").hide();
+			$("."+ele).show();
+			$(".tab_t .item").removeClass("on");
+			$(this).addClass("on");
+			
+		})
+	//加减计算
+	$(".add").click(function(){
+		var obj = $(this).parent().parent();
+		var price = 0;
+		if(diff=="1"){
+			price = parseFloat(obj.find(".price").html().replace("￥",""));
+			var t=$(this).parent().find('input[class*=ipt]'); 
+			t.val(parseInt(t.val())+1);
+			if(obj.find("input:checkbox").is(':checked')==true){
+				$("#spanTotalPrice").html(FloatAdd(parseFloat($("#spanTotalPrice").html()),price));
+			}
+		}else{
+			price = 0.01;
+			var t=$(this).parent().find('input[class*=ipt]'); 
+			t.val(parseInt(t.val())+1);
+			if(obj.find("input:checkbox").is(':checked')==true){
+				$("#oneTotalPrice").html(parseInt($("#oneTotalPrice").html())+price);
+			}
+		}
+		
+	}) 
+	$(".min").click(function(){ 
+		var obj = $(this).parent().parent();
+		var price = 0;
+		if(diff=="1"){
+			price = parseFloat(obj.find(".price").html().replace("￥",""));
+			var t=$(this).parent().find('input[class*=ipt]'); 
+			t.val(parseInt(t.val())-1);
+			if(parseInt(t.val())<1){ 
+				t.val(1); 
+			}else{
+				if(obj.find("input:checkbox").is(':checked')==true){
+					$("#spanTotalPrice").html(FloatSub(parseFloat($("#spanTotalPrice").html()),price));
+				}
+			}
+		}else{
+			price = 1;
+			var t=$(this).parent().find('input[class*=ipt]'); 
+			t.val(parseInt(t.val())-1);
+			if(parseInt(t.val())<1){ 
+				t.val(1); 
+			}else{
+				if(obj.find("input:checkbox").is(':checked')==true){
+					$("#oneTotalPrice").html(parseInt($("#oneTotalPrice").html())-price);
+				}
+			}
+		}
+		
+	})
+	selCheck=function(obj){
+		var price=parseFloat($(obj).val());
+		var selectState=$(obj).is(':checked');
+		var total_price=0;
+		var textnum = parseInt($(obj).parent().parent().find("input:text").val());
+		if(selectState==true){
+			total_price = FloatAdd(parseFloat($("#spanTotalPrice").html()),FloatMul(price,textnum));
+			i++;
+		}else{
+			total_price = FloatSub(parseFloat($("#spanTotalPrice").html()),FloatMul(price,textnum));
+			i--;
+		}
+		$("#spanTotalPrice").html(total_price);
+		$("#commodityNum").html(i);
+	}
+	$('#commodityCheck input:checkbox').on('click' , function(){
+		if(i!=0){
+			i=0;
+		}
+		var total_price=0;
+		var isCheck=$(this).is(':checked');
+		var that = this;
+		$('#commodity input:checkbox').each(function(){
+				this.checked = that.checked;
+				if(isCheck==true){
+					var price=parseFloat($(this).val());
+					var textnum = parseInt($(this).parent().parent().find("input:text").val());
+					total_price=FloatAdd(total_price,FloatMul(price,textnum));
+					i++;
+				}else{
+					i=0;
+				}
+		});
+		$("#spanTotalPrice").html(total_price);	
+		$("#commodityNum").html(i);
+	});
+	commodityDel=function(){
+		var count=0;
+		var id="";
+		$('#commodity input:checkbox').each(function(){
+			var isCheck=$(this).is(':checked');
+			if(isCheck==true){
+				count++;
+				var that = $(this).attr("id");
+				id+=that+",";
+			}
+		});
+		if(count==0){
+			dialog('#ok',3000,"请选择要删除的数据");
+			return;
+		}else{
+			dialog("#confirm");
+			dialogRight=function(){
+				i--;
+				dialogClose();
+				$.ajax({
+					type:"POST",
+					url:"${ctx}/car/delList?cartId="+id,
+					success : function(json){
+					var idFor= new Array();
+					idFor = id.split(",");
+					   for(var i=0;i<idFor.length;i++){
+						   $("#"+idFor[i]).parent().parent().remove();
+					   }
+					   $("#spanTotalPrice").html(0);
+					   $("#commodityNum").html(0);
+					   if(json.size == 0){
+					   $("#div_car").hide();
+					   $("#div_noCar").show();
+					   }
+					}
+				});
+			}
+		}
+	}
+	oneCheck=function(obj){
+		var price=parseFloat($(obj).val());
+		var selectState=$(obj).is(':checked');
+		var total_price=0;
+		var textnum = parseInt($(obj).parent().parent().find("input:text").val());
+		if(selectState==true){
+			total_price = FloatAdd(parseFloat($("#oneTotalPrice").html()),FloatMul(price,textnum));
+			j++;
+		}else{
+			total_price = FloatSub(parseFloat($("#oneTotalPrice").html()),FloatMul(price,textnum));
+			j--;
+		}
+		$("#oneTotalPrice").html(total_price);
+		$("#spanHow").html(j);
+		$("#onebuysNum").html(j);
+	}
+	$('#onebuysCheck input:checkbox').on('click' , function(){
+		if(j!=0){
+			j=0;
+		}
+		var total_price=0;
+		var isCheck=$(this).is(':checked');
+		var that = this;
+		var j=0;
+		$('#onebuys input:checkbox').each(function(){
+				this.checked = that.checked;
+				if(isCheck==true){
+					var price=parseFloat($(this).val());
+					var textnum = parseInt($(this).parent().parent().find("input:text").val());
+					total_price=FloatAdd(total_price,FloatMul(price,textnum));
+					j++;
+				}else{
+					j=0
+				}
+		});
+		$("#oneTotalPrice").html(total_price);	
+		$("#spanHow").html(j);
+		$("#onebuysNum").html(j);
+	});
+	onebuysDel=function(){
+		var count=0;
+		var id="";
+		$('#onebuys input:checkbox').each(function(){
+			var isCheck=$(this).is(':checked');
+			if(isCheck==true){
+				count++;
+				var that = $(this).attr("id");
+				id+=that+",";
+			}
+		});
+		if(count==0){
+			dialog('#ok',3000,"请选择要删除的数据");
+			return;
+		}else{
+			dialog("#confirm");
+			dialogRight=function(){
+				j--;
+				dialogClose();
+				$.ajax({
+					type:"POST",
+					url:"${ctx}/car/delList?cartId="+id+" ",
+					success : function(json){
+					var idFor= new Array();
+					idFor = id.split(",");
+					   for(var i=0;i<idFor.length;i++){
+						   $("#"+idFor[i]).parent().parent().remove();
+					   }
+					   $("#spanHow").html(0);
+					   $("#oneTotalPrice").html(0);
+					   $("#onebuysNum").html(0);
+					}
+				});
+			}
+		}
+	}
+	settlement=function(){
+		var count=0;
+		var id="";
+		var buy_num = "";
+		var total_price = "";
+		var commodity_type="";
+		if(diff=="1"){
+			$('#commodity input:checkbox').each(function(){
+				var isCheck=$(this).is(':checked');
+				if(isCheck==true){
+					count++;
+					var that = $(this).attr("id");
+					id+=that+",";
+					var obj = $(this).parent().parent();
+					var num = parseInt(obj.find("input:text").val());
+					var price = parseFloat(obj.find(".price").html().replace("￥","")); 
+				    total_price+= FloatMul(price,num)+",";
+				    buy_num+=num+",";
+				}
+			})
+			if(count==0){
+				dialog('#ok',3000,"请选择要结算的物品");
+				return;
+			}
+			commodity_type="01";
+		}else{
+			$('#onebuys input:checkbox').each(function(){
+				var isCheck=$(this).is(':checked');
+				if(isCheck==true){
+					count++;
+					var that = $(this).attr("id");
+					id+=that+",";
+					var obj = $(this).parent().parent();
+					var num = parseInt(obj.find("input:text").val());
+				    total_price+= FloatMul(1,num)+",";
+				    buy_num+=num+",";
+				}
+			})
+			if(count==0){
+				dialog('#ok',3000,"请选择要提交的物品");
+				return;
+			}
+			commodity_type="02";
+		}
+		$.ajax({
+			type:"POST",
+			url:"${ctx}/car/changList?cartId="+id+"&buy_num="+buy_num+"&total_price="+total_price+" ",
+			success : function(json){
+				window.location.href="${ctx}/pay/carForwardConfirm?buy_id="+id+"&commodity_type="+commodity_type;
+			}
+		});
+	}
+})
+</script>
+<#include "include/foot.html"/>
+</body>
+</html>

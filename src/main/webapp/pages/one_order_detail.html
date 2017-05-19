@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+<#include "include/header.html"/>
+<body>
+<div class="page">
+	<div class="content m">
+		<div class="cart_confirm">
+			<#list pobList as a>
+			<div class="item">
+				<#if a.commodity_logo??>
+				<img src="${server_uri!}${a.commodity_logo!}" class="pic">
+				<#else>
+				<img src="" class="pic">
+				</#if>
+				<div class="title">${a.commodity_name!}</div>
+				<div class="title">期号：${a.time_slot}</div>
+				<div class="price">￥${a.total_price!}</div>
+				<div class="attr">型号:${a.version_type!}</div>
+				<div class="attr">数量:${a.buy_num!}</div>
+				<#if '${a.status!}'=='01'>
+				<div class="attr">状态：进行中</div>
+				</#if>
+				<#if '${a.status!}'=='02'>
+				<div class="title">状态：待揭晓</div>
+				</#if>
+				<#if '${a.status!}'=='03'>
+				<div class="title">状态：已揭晓</div>
+					<#if '${a.is_win!}'=='01'>
+					<div class="title">是否中奖：否</div>
+					<#else>
+					<div class="title">是否中奖：是</div>
+					<div class="title">幸运号：${a.lucky_num!}</div>
+					</#if>
+				</#if>
+			</div>
+			</#list>
+		</div>
+	</div>
+</div>
+<script type="text/javascript">
+$(function(){
+});
+</script>
+</body>
+</html>

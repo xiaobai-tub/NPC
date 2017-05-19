@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html>
+<#include "include/header.html"/>
+<body>
+<div class="page">
+	<div class="content">
+		<div class="tab_4a" id="more" data-type="">
+			<div class="item on" id="indianaRecord"  onclick="MyOneBuy('',''); return false;"><span>夺宝记录</span></div>
+		<#if rewardRecord == 0>
+			<div class="item" id="rewardRecord"  onclick="MyOneBuy('02',''); return false;"><span>中奖记录</span></div>
+		<#else>
+			<div class="item" id="rewardRecord"  onclick="MyOneBuy('02',''); return false;"><span>中奖记录<i>${rewardRecord!}</i></span></div>
+		</#if>
+		<#if Conduct == 0>
+			<div class="item" id="Conduct"  onclick="MyOneBuy('','01'); return false;"><span>进行中</span></div>
+		<#else>
+			<div class="item" id="Conduct"  onclick="MyOneBuy('','01'); return false;"><span>进行中<i>${Conduct!}</i></span></div>
+		</#if>
+		<#if noAnnounced == 0>
+			<div class="item" id="noAnnounced"  onclick="MyOneBuy('','02'); return false;"><span>待揭晓</span></div>
+		<#else>
+			<div class="item" id="noAnnounced"  onclick="MyOneBuy('','02'); return false;"><span>待揭晓<i>${noAnnounced!}</i></span></div>
+		</#if>
+		<#if Announced == 0>
+			<div class="item" id="Announced"  onclick="MyOneBuy('','03'); return false;"><span>已揭晓</span></div>
+		<#else>
+			<div class="item" id="Announced"  onclick="MyOneBuy('','03'); return false;"><span>已揭晓<i>${Announced!}</i></span></div>
+		</#if>
+		</div>
+		
+		<div class="product_list" id="product_list">
+		<#list oneBuyList as a>
+		<div class="order_list">
+			<div class="item_win">
+			<div onclick="onePurchaseDetail('${a.time_slot!}');return false;";>
+				<#if a.commodity_logo??>
+				<img src="${server_uri!}${a.commodity_logo!}" class="pic">
+				<#else>
+				<img src="" class="pic">
+				</#if>
+				<div class="title">商品名称:${a.commodity_name!}</div>
+				<div class="title">期号:${a.time_slot_num!}</div>
+				<div class="title">总需:${a.total_count!}</div>
+				<div class="title">剩余:${a.surplus_count!}</div>
+				<div class="title">本次参与:${a.countPart!}人次</div>
+				<#if '${a.status!}'=='03'>
+				<div class="title">幸运号:${a.win_num!}</div>
+				</#if>
+				<#if '${a.pay_status!}'=='02'>
+				<div class="title">夺宝号码:</div>
+				<div class="warp">${a.luckyNum!}</div>
+				</#if>
+				<div class="title">购买型号:</div>
+				<div class="warp">${a.versionType!}</div>
+				</div>
+				<#if '${a.is_win!}'== '02' && '${a.is_add_addr!}'== '01'>
+					 <div class="btn_group">
+					 <div class="btn btn_orange btn_mini" onclick="addArrdess('${a.total_id!}');" >填写地址</div>
+					 </div>
+					 </#if>
+					 <#if '${a.order_status!}'== '03'>
+					 <div class="btn_group">
+					 <div class="btn btn_orange btn_mini" onclick="confirmReceipt('${a.total_id!}');" >确认收货</div>
+					 </div>
+					 </#if>
+					 <#if '${a.is_win!}'== '02'&&'${a.is_add_addr!}' == '02'>
+					 <div class="title">收货人姓名:${a.receiver_name!}</div>
+					 <div class="title">收货人电话:${a.receiver_telephone!}</div>
+					 <div class="title">收货地址:${a.send_address!}</div>
+				</#if>
+				<#if a.express_company?? && a.express_no??>
+				<div class="title">快递公司:${a.express_company!}</div>
+				<div class="title">运单号码:${a.express_no!}</div>
+				</#if>
+			</div>
+		</div>
+		</#list>
+		<#if pageNumber lt totalPage>
+			<li id="pageNum1" style="text-align: center;"><div onclick="nextPage1(${pageNumber}); return false;"><span class="more">更多<span class="arrow1"></span><span class="arrow2"></span></span></div></li>
+		</#if> 
+		</div>
+		
+	</div>
+	<div class="dialog" id="harvest">
+				<div class="dialog_content">
+					<div class="alert">
+					<div class="desc">确定已收货？</div>
+					<div class="ctr">
+					<div class="g2"><span class="btn btn_red btn_mini" onClick="dialogRight()">确定</span></div>
+					<div class="g2"><span class="btn btn_gray btn_mini" onClick="dialogClose()">取消</span></div>
+					</div>
+					</div>	
+				</div>
+			</div>
+	</div>
+</div>
+
+<div class="mask"></div>
+<script type="text/javascript">
+$(function(){
+var isWin="";
+var orderStatus="";
+	$(".item").removeClass("on");
+	var check_type="${check_type!}";
+		if(check_type == ""){
+			$("#indianaRecord").addClass("on");
+			isWin="";
+			orderStatus="";
+		 }else if(check_type == "01"){
+			 $("#rewardRecord").addClass("on");
+			 isWin="02";
+			 orderStatus="";
+		 }else if(check_type == "02"){
+			 $("#Conduct").addClass("on");
+			 isWin="";
+			 orderStatus="01";
+		 }else if(check_type == "03"){
+			 $("#Announced").addClass("on");
+			 isWin="";
+			 orderStatus="03";
+		 }else if(check_type == "02"){
+			 $("#noAnnounced").addClass("on");
+			 isWin="";
+			 orderStatus="04";
+		 }
+		MyOneBuy=function(is_win,status){
+			$(".item").removeClass("on");
+			if(is_win == "" && status == ""){
+				$("#indianaRecord").addClass("on");
+				isWin=is_win;
+				orderStatus=status;
+			}else if(is_win == "02" && status == ""){
+				$("#rewardRecord").addClass("on");
+				isWin=is_win;
+				orderStatus=status;
+			}else if(is_win == "" && status == "01"){
+				 $("#Conduct").addClass("on");
+				 isWin=is_win;
+				orderStatus=status;
+			}else if(is_win == "" && status == "02"){
+				 $("#noAnnounced").addClass("on");
+				 isWin=is_win;
+				orderStatus=status;
+			}else if(is_win == "" && status == "03"){
+				 $("#Announced").addClass("on");
+				 isWin=is_win;
+				 orderStatus=status;
+			}
+			 $.post("${ctx}/mine/MyOneBuy",{
+				 is_win:is_win,
+				 status:status
+					//page:pnum+1
+					},function(json){
+						var htm="";
+						var list=json.list;
+						for(var i in list){
+						        htm+="<div class='order_list'>";
+								htm+="<div class='item_win'>";
+								htm+="<div onclick='onePurchaseDetail(\""+list[i].time_slot+"\");return false;';>";
+								if(list[i].commodity_logo && list[i].commodity_logo !=null && list[i].commodity_logo!=""){
+									htm+="<img src='${server_uri!}"+list[i].commodity_logo+"' class='pic'>";
+								}else{
+									htm+="<img src='' class='pic'>";
+								}
+								var commodity_name=(list[i].commodity_name ==null)?"":list[i].commodity_name;
+								htm+="<div class='title'>商品名称:"+commodity_name+"</div>"; 
+								var time_slot=(list[i].time_slot_num ==null)?"":list[i].time_slot_num;
+								htm+="<div class='title'>期号:"+time_slot+"</div>";
+								var total_count=(list[i].total_count == null)?"":list[i].total_count;
+								htm+="<div class='title'>总需:"+total_count+"</div>";
+								var surplus_count=(list[i].surplus_count == null)?"":list[i].surplus_count;
+								htm+="<div class='title'>剩余:"+surplus_count+"</div>";
+								var countPart=(list[i].countPart == null)?"":list[i].countPart;
+								htm+="<div class='title'>本次参与:"+countPart+"人次</div>";
+								if(list[i].status=="03"){
+									htm+="<div class='title'>幸运号:"+list[i].win_num+"</div>";
+								}
+								if(list[i].pay_status=="02"){
+									htm+="<div class='title'>夺宝号码:</div><div class='warp'>"+list[i].luckyNum+"</div>";
+								}
+								htm+="</div>";
+								if(list[i].order_status=="03"){
+									htm+="<div class='btn_group'><div class='btn btn_orange btn_mini' onclick="+"confirmReceipt('"+list[i].total_id+"');"+">确认收货</div></div>";
+								}
+								if(list[i].is_win=="02"&&list[i].is_add_addr=="01"){
+									htm+="<div class='btn_group'><div class='btn btn_orange btn_mini' onclick="+"addArrdess('"+list[i].total_id+"');"+">填写地址</div></div>";
+								}
+								htm+="<div class='title'>购买型号:</div>";
+								htm+="<div class='warp'>"+list[i].versionType+"</div>";
+				                
+								if(list[i].is_win=="02"&&list[i].is_add_addr=="02"){
+									htm+="<div class='title'>收货人姓名:"+list[i].receiver_name+"</div>";
+									htm+="<div class='title'>收货人电话:"+list[i].receiver_telephone+"</div>";
+									htm+="<div class='title'>收货地址:"+list[i].send_address+"</div>";
+								}
+								if(list[i].express_company !=null || list[i].express_no !=null ){
+									htm+="<div class='title'>快递公司:"+list[i].express_company+"</div>";
+									htm+="<div class='title'>运单号码:"+list[i].express_no+"</div>";
+								}
+								htm+="</div></div>";
+						}
+						if(json.pageNumber < json.totalPage){
+							htm+="<li id='pageNum1' style='text-align: center;'><div onclick='nextPage1("+json.pageNumber+"); return false;'><span class='more'>更多<span class='arrow1'></span><span class='arrow2'></span></span></div></li>";
+						}
+						$("#product_list").html(htm);
+				},'json');
+		}
+			 nextPage1=function(pnum){
+					$("#pageNum1").remove();
+					$.post("${ctx}/mine/MyOneBuy",{
+						 is_win:"${is_win!}",
+						 status:"${status!}", 
+						 page:pnum+1
+							},function(json){
+								var htm="";
+								var list=json.list;
+								console.log(list);
+								for(var i in list){
+								        htm+="<div class='order_list'>";
+										htm+="<div class='item_win'>";
+										htm+="<div onclick='onePurchaseDetail(\""+list[i].time_slot+"\");return false;';>";
+										if(list[i].commodity_logo && list[i].commodity_logo !=null && list[i].commodity_logo!=""){
+											htm+="<img src='${server_uri!}"+list[i].commodity_logo+"' class='pic'>";
+										}else{
+											htm+="<img src='' class='pic'>";
+										}
+										var commodity_name=(list[i].commodity_name ==null)?"":list[i].commodity_name;
+										htm+="<div class='title'>商品名称:"+commodity_name+"</div>"; 
+										var time_slot=(list[i].time_slot_num ==null)?"":list[i].time_slot_num;
+										htm+="<div class='title'>期号:"+time_slot+"</div>";
+										var total_count=(list[i].total_count == null)?"":list[i].total_count;
+										htm+="<div class='title'>总需:"+total_count+"</div>";
+										var surplus_count=(list[i].surplus_count == null)?"":list[i].surplus_count;
+										htm+="<div class='title'>剩余:"+surplus_count+"</div>";
+										var countPart=(list[i].countPart == null)?"":list[i].countPart;
+										htm+="<div class='title'>本次参与:"+countPart+"人次</div>";
+										if(list[i].status=="03"){
+									       htm+="<div class='title'>幸运号:"+list[i].win_num+"</div>";
+								         }
+										if(list[i].pay_status=="02"){
+											htm+="<div class='title'>夺宝号码:</div><div class='warp'>"+list[i].luckyNum+"</div>";
+										}
+										htm+="</div>";
+										if(list[i].is_win=="02"&&list[i].is_add_addr=="01"){
+											htm+="<div class='btn_group'><div class='btn btn_orange btn_mini' onclick="+"addArrdess('"+list[i].total_id+"');"+">填写地址</div></div>";
+										}
+										if(list[i].order_status=="03"){
+									       htm+="<div class='btn_group'><div class='btn btn_orange btn_mini' onclick="+"confirmReceipt('"+list[i].total_id+"');"+">确认收货</div></div>";
+								        }
+										htm+="<div class='title'>购买型号:</div>";
+								        htm+="<div class='warp'>"+list[i].versionType+"</div>";
+										if(list[i].is_win=="02"&&list[i].is_add_addr=="02"){
+											htm+="<div class='title'>收货人姓名:"+list[i].receiver_name+"</div>";
+											htm+="<div class='title'>收货人电话:"+list[i].receiver_telephone+"</div>";
+											htm+="<div class='title'>收货地址:"+list[i].send_address+"</div>";
+										}
+										if(list[i].express_company !=null || list[i].express_no !=null ){
+									htm+="<div class='title'>快递公司:"+list[i].express_company+"</div>";
+									htm+="<div class='title'>运单号码:"+list[i].express_no+"</div>";
+								}
+										htm+="</div></div>";
+								}
+								if(json.pageNumber < json.totalPage){
+									htm+="<li id='pageNum1' style='text-align: center;'><div onclick='nextPage1("+json.pageNumber+"); return false;'><span class='more'>更多<span class='arrow1'></span><span class='arrow2'></span></span></div></li>";
+								}
+								$("#product_list").append(htm);
+						},'json');
+			 
+		}
+	
+	$(".addr_list .item").swipe({
+		swipe:function(event, direction, distance, duration, fingerCount) {
+			if(direction == "left"){
+				$(this).addClass("on")
+			}else if(direction == "right"){
+				$(this).removeClass("on")
+			}
+		}
+	});
+	onePurchaseDetail=function(id){
+	  window.location.href="${ctx}/one/getOnePurchase?id="+id;
+	}
+	addArrdess=function(buy_id){
+		window.location.href="${ctx}/mine/getAddr?is_order=01&buyId="+buy_id;
+	};
+	confirmReceipt=function(total_id){
+	     dialog("#harvest");
+	     dialogRight=function(){
+				dialogClose();
+		 window.location.href="${ctx}/one/confirmReceipt?total_id="+total_id+"&is_win="+isWin+"&status="+orderStatus+"&type=1";
+	   }
+	 }
+})
+</script>
+</body>
+</html>

@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<#include "include/header.html"/>
+<body>
+<div class="page">
+	<div class="content">
+		<div class="favorite">
+		<#list collectList as a>
+			<a href="javascript:void(0);" class="item" onclick="commodityDetail('${a.commodity_id}','${a.commodity_type}');return false">
+				<img src="${server_uri!}${a.commodity_logo!}" class="pic">
+				<div class="title">${a.commodity_name!}</div>
+				<div class="price">${a.commodity_price!}</div>
+			</a>
+			</#list>
+		</div>
+	</div>
+</div>
+<script type="text/javascript">
+$(function(){
+ $("#a_my").attr("href","${ctx}/mine/MineInformation");
+ $("#a_car").attr("href","${ctx}/car/carList");
+ $("#a_shop").attr("href","${ctx}/home/homePage");
+ $(".addr_list .item").swipe({
+		swipe:function(event, direction, distance, duration, fingerCount) {
+			if(direction == "left"){
+				$(this).addClass("on")
+			}else if(direction == "right"){
+				$(this).removeClass("on")
+			}
+		}
+	})
+commodityDetail=function(commodity_id,commodity_type){
+	 if(commodity_type == "01"){
+		 window.location.href="${ctx}/home/commodityDetail?id="+commodity_id;
+	 }
+ }
+	
+})
+</script>
+<#include "include/foot.html"/>
+</body>
+</html>

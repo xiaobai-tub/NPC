@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html>
+<#include "include/header.html"/>
+<body>
+<div class="page ticket_page">
+  <div class="p_ticket">
+  <#if ptr??>
+	  <#if pt??>
+	    <div class="content">
+	      <strong>${pt.mortgage_amount!}</strong>
+	      <div class="info">
+	        <h2>${pt.card_type_s!}</h2>
+	        <h3>满${pt.minimum_threshold_amount!}立减</h3>
+	      </div>
+	    </div>
+	  <#else>
+	    <#if purchaseUserTicket??>
+	     <div class="content">
+	      <strong>${purchaseUserTicket.mortgage_amount!}</strong>
+	      <div class="info">
+	        <h2>${purchaseUserTicket.card_type_s!}</h2>
+	        <h3>满${purchaseUserTicket.minimum_threshold_amount!}立减</h3>
+	      </div>
+	    </div>
+	    <div class="t_mask">已领取</div>
+	    <#else>
+	     <div class="content">
+   		 </div>
+   		 <div class="t_mask">暂无卡券可领取</div>
+	    </#if>
+	  </#if>
+  <#else>
+     <#if purchaseUserTicket??>
+	     <div class="content">
+	      <strong>${purchaseUserTicket.mortgage_amount!}</strong>
+	      <div class="info">
+	        <h2>${purchaseUserTicket.card_type_s!}</h2>
+	        <h3>满${purchaseUserTicket.minimum_threshold_amount!}立减</h3>
+	      </div>
+	    </div>
+	    <div class="t_mask">已领取</div>
+	    <#else>
+	     <div class="content">
+   		 </div>
+   		 <div class="t_mask">暂无卡券可领取</div>
+	    </#if>
+  </#if>
+  </div>
+  <#if pt??>
+  <button class="t_btn" onclick="receive('${pt.id!}');"><span class="content">立即使用</span></button>
+  <#else>
+  <button class="t_btn" onclick="skipHome();"><span class="content">立即使用</span></button>
+  </#if>
+</div>
+<div class="mask"></div>
+<!--弹出框-->
+<div class="dialog" id="confirm">
+	<div class="dialog_content">
+		<div class="alert">
+			<div class="desc">确定删除？</div>
+			<div class="ctr">
+				<div class="g2"><span class="btn btn_red btn_mini" onClick="dialogRight()">确定</span></div>
+				<div class="g2"><span class="btn btn_gray btn_mini" onClick="dialogClose()">取消</span></div>
+			</div>
+		</div>	
+	</div>
+</div>
+<script type="text/javascript">
+<#if ptr?? >
+	<#if pt??>
+	<#else>
+		<#if purchaseUserTicket?? >
+		$(".t_mask").show() //显示遮罩
+		<#else>
+		$(".t_mask").show() //显示遮罩
+		</#if> 
+	</#if>
+<#else>
+	<#if purchaseUserTicket??>
+$(".t_mask").show() //显示遮罩
+<#else>
+	$(".t_mask").show() //显示遮罩
+	</#if>
+</#if> 
+
+skipHome=function(){
+   window.location.href="${ctx}/home/homePage";
+}
+ receive=function(ticket_id){
+		 $.post("${ctx}/home/toTicket",{
+			 ticket_id:ticket_id
+				},function(json){
+					if(json.code==0){
+					   window.location.href="${ctx}/home/homePage";
+					}else{
+					   dialog('#ok',1500,json.msg);
+					}
+			},'json');
+ }
+ </script>
+</body>
+</html>

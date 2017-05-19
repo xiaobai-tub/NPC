@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=750, user-scalable=no, target-densitydpi=device-dpi">
+		<meta name="screen-orientation" content="portrait">
+		<meta name="x5-orientation" content="portrait">
+		<meta name="format-detection" content="telephone=no">
+		<meta name="apple-mobile-web-app-capable" content="yes" />
+
+        <title>闽南异兽招行卡活动</title>
+        <link rel="stylesheet" type="text/css" href="${ctx}/resource/monster/css/reset.css" />
+        <link rel="stylesheet" type="text/css" href="${ctx}/resource/monster/css/certificatepage.css?v0.01" />
+    <body>
+        <div class="wrap clearfix">
+            <div class="title"></div>
+            <div class="info">
+                <div class="name">
+                    <span>姓  名:</span>
+                    <input type="text" value="${pzu.user_name!}" readonly />
+                </div>
+                <div class="phone">
+                    <span>手机号:</span>
+                    <input type="text" value="${pzu.telephone!}" readonly />
+                </div>
+                <div class="pickedgift">
+                    <span>所选礼物:</span>
+                    <input type="text" value="${pzu.commodity_name!}" readonly />
+                </div>
+            </div>
+            <div class="pic-info">
+                <div class="giftpic">
+                    <h2>礼品图片</h2>
+                    <div id="forwardCom">
+                        <img src="${server_uri!}${pzu.commodity_logo!}" alt="" />
+                    </div>
+                </div>
+                <div class="certifipic">
+                    <h2>照片凭证</h2>
+                    <div>
+                        <img src="${pzu.credential!}" alt="" />
+                    </div>
+                    <span class="stamp1"></span>
+                </div>
+            </div>
+            <div class="tipmess">
+            	<h2>*点击图片可重新选择礼品*</h2>
+            </div>
+            <div id="btnText">
+            <#if pzu.is_receive=='02'>
+              <div class="btn" onclick="confirmReceive();">由银行人员确认</div>
+            <#else>
+            <div class="btn" onclick="returnIndex();">返回</div>
+            </#if>
+            </div>
+            <div class="vipwindow">
+                <div class="close"></div>
+                <h2 class="viptext">
+                    <p>长按识别二维码</p>
+                    <p>关注领取300元红包</p>
+                    <p>更有丰富的会员福利</p>
+                </h2>
+                <div class="codepic">
+                    <img src="${ctx}/resource/monster/img/codepic1.png" alt="" />
+                </div>
+            </div>
+        </div>
+    </body>
+    <script type="text/javascript" src="${ctx}/resource/js/jquery-2.1.4.min.js"></script>
+    <script type="text/javascript">
+    <#if pzu.is_receive=='01'>
+    $("#forwardCom").removeAttr("onclick");
+    $('.tipmess').css({
+        display: 'none'
+    })
+    $('.stamp1').addClass('stamper');
+      <#if pzu.zh_card_no??>
+	    setTimeout((function(){
+			 $('.vipwindow').css({
+		            display: 'block'
+		      })
+	     }), 700)
+	  </#if>
+	<#else>
+	    $("#forwardCom").attr("onclick","forwardCommodity()"); 
+    </#if>
+    function change() {
+        $('.stamp1').addClass('stamper');
+    }
+    $('.close').on('click', function(){
+        $('.vipwindow').css({
+            display: 'none'
+        })
+    })
+    function forwardCommodity(){
+    	window.location.href="${ctx}/member/forwardZhCommodity";
+    }
+    function confirmReceive(){
+    	$.ajax({
+    		type:"POST",
+    		async : false,	
+    		url:"${ctx}/member/confirmReceive",
+    		success : function(json){
+    			 if(json.code == 0 ){
+    				 $("#forwardCom").removeAttr("onclick");
+    				 $('.tipmess').css({
+    				     display: 'none'
+    				 })
+    				 change();
+    				 if(json.msg ==1){
+    					 setTimeout((function(){
+        					 $('.vipwindow').css({
+        				            display: 'block'
+        				      })
+        		            }), 700)
+    				 }
+    				 $("#btnText").html("<div class='btn' onclick='returnIndex();'>返回</div>");
+    			 }
+    		}
+    	}); 
+    }
+    function showDia(){
+		  $('.vipwindow').css({
+	            display: 'block'
+	      })    
+    }
+    function returnIndex(){
+    	window.location.href="${ctx}/member/returnIndex";
+    }
+    </script>
+<div style="display:none;" >
+ <script src="https://s4.cnzz.com/z_stat.php?id=1259913599&web_id=1259913599" language="JavaScript" ></script>
+</div>
+</html>

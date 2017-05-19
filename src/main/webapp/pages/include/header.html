@@ -1,0 +1,101 @@
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+<meta name="format-detection" content="telephone=no" />
+<title>米力社-商城</title>
+<link rel="stylesheet" href="${ctx}/resource/css/reset.css?20160919">
+<link rel="stylesheet" href="${ctx}/resource/css/swiper.css?20160109">
+<link rel="stylesheet" href="${ctx}/resource/css/css.css?20161024">
+<script src="${ctx}/resource/js/jquery-1.9.1.js"></script>
+<script src="${ctx}/resource/js/tappy.js"></script>
+<script src="${ctx}/resource/js/swiper.js"></script>
+<script src="${ctx}/resource/js/js.js"></script>
+<script src="${ctx}/resource/sco/js/sco.message.js"></script>
+<script src="${ctx}/resource/js/touchSwipe.js"></script>
+<script src="${ctx}/resource/js/jquery.cookie.js"></script>
+<script src="${ctx}/resource/js/float.js"></script>
+<script src="http://res.wx.qq.com/open/js/jweixin-1.0.0.js"></script>
+<script>
+$(function(){
+	//滑动图片尺寸
+	$(".swiper .pic").height($(".page").width()*500/640)
+	//商品列表图片尺寸
+	$(".product_list .pic").height($(".product_list .pic").width())
+	//内容隐藏显示切换
+	//分享回调
+	function shareAdd(){
+	 $.ajax({type : "POST",url : "${ctx}/home/shareAdd",async : false,data:{},success:function(json){
+                         if(json.code = 0 ){
+                         }
+	                   }
+	                   });
+	}
+	//分享处理
+	$.ajax({
+		type: "GET",
+		url: "${ctx}/share/wxShare",
+		data:"reqUrl="+encodeURIComponent(window.location.origin+window.location.pathname+window.location.search),
+		success: function(json){
+			var conf={
+			debug: false,
+			appId: json.wxConfig.appId,
+			timestamp: json.wxConfig.timestamp,
+			nonceStr: json.wxConfig.nonceStr,
+			signature: json.wxConfig.signature,
+			jsApiList: [
+			    'addCard',
+				'onMenuShareTimeline',
+				'onMenuShareAppMessage',
+				'scanQRCode'
+			]
+			};
+			wx.config(conf);
+			wx.ready(function () {
+				wx.checkJsApi({
+					  jsApiList: [
+					    'addCard',
+						'onMenuShareTimeline',
+						'onMenuShareAppMessage',
+						'scanQRCode'
+					  ],
+					  success: function (res) {
+					  }
+				});
+				var shareData = {
+					title: json.share.title,
+					desc: json.share.desc,
+					link: json.share.link,
+					imgUrl: json.share.imgUrl,
+					success: function () { 
+					 shareAdd();
+                     }
+				 };
+				 wx.onMenuShareAppMessage(shareData);
+				 wx.onMenuShareTimeline(shareData);
+			});
+		}
+	});
+})
+</script>
+<div class="mask"></div>
+<!--弹出框-->
+<div class="dialog" id="ok">
+	<div class="dialog_content">
+		<div class="alert">
+			<div class="desc"><img src="" class="icon"> 操作成功</div>
+		</div>	
+	</div>
+</div>
+<!--二维码-->
+<div class="dialog" id="dialog_browser" onClick="dialogClose()">
+	<div class="dialog_content">
+		<div class="alert1">
+			<img src="${ctx}/resource/images/qr_code.png?123" class="icon1">
+		</div>	
+	</div>
+</div>
+<div style="display:none;" >
+ <script src="https://s4.cnzz.com/z_stat.php?id=1259913599&web_id=1259913599" language="JavaScript" ></script>
+</div>
+
+

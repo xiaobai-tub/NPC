@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html>
+<#include "include/header.html"/>
+<script src="http://res.wx.qq.com/open/js/jweixin-1.0.0.js"></script>
+<body>
+	<div class="page">
+		<div class="content m">
+			<div class="cart_confirm">
+				<#list commodityList as a>
+				<div class="item">
+					<#if a.commodity_logo??> <img
+						src="${server_uri!}${a.commodity_logo!}" class="pic">
+					<#else> <img src="" class="pic"> </#if>
+					<div class="title">${a.commodity_name!}</div>
+					<div class="price">￥${a.per_price!}</div>
+					<div class="attr">型号:${a.version_type!}</div>
+					<div class="attr">数量:${a.buy_num!}</div>
+					<#if a.order_status == '08' >
+					<div class="btn_group" style="position: absolute;bottom: 0;right: 0;">
+						<div class="btn btn_orange btn_mini"
+							onclick="myBabycontent('${a.commodity_id!}','${a.total_id!}','${a.id!}');">评价</div>
+					</div>
+					</#if>
+				</div>
+				</#list>
+			</div>
+			<#if sendAddress??>
+			<div class="com_addr">
+				<div class="t">送至</div>
+				<div class="address">${sendAddress.send_address!}</div>
+				<div class="name">${sendAddress.receiver_name!}${sendAddress.telephone}</div>
+			</div>
+			<#else>
+			<div class="com_addr">
+				<div class="t">送至</div>
+				<div class="address"></div>
+				<div class="name"></div>
+			</div>
+			</#if>
+			<#if order_status == '03' >
+			<div class="mod_attr mod_large">
+				<div class="item">
+					<div class="fl">快递公司</div>
+					<div class="fr">${express_company!}</div>
+				</div>
+				<div class="item">
+					<div class="fl">运单号码</div>
+					<div class="fr">${express_no!}</div>
+				</div>
+			</div>
+			<#else>
+			<div class="mod_attr mod_large">
+				<div class="item">
+					<div class="fl">配送方式</div>
+					<div class="fr">商家配送</div>
+				</div>
+			</div>
+			</#if>
+			<div class="mod_attr mod_large">
+				<div class="item">
+					<div class="fl">商品总额</div>
+					<div class="fr">
+						￥<span class="red">${commodityBuyTotal.commodity_total_price!}</span>
+					</div>
+				</div>
+				<div class="item">
+					<div class="fl">运费</div>
+					<div class="fr">
+						￥<span class="red" id="send_cost">${commodityBuyTotal.send_cost!}</span>
+					</div>
+				</div>
+			</div>
+			<#if order_status != '01' >
+		<div class="mod_attr mod_large">
+				<div class="item">
+					<div class="fl">抵押金额</div>
+					<div class="fr">
+						￥<span class="red" id="totalPrice">${commodityBuyTotal.mortgage_amount!}</span>
+					</div>
+				</div>
+				<div class="item">
+					<div class="fl">实付金额</div>
+					<div class="fr">
+						￥<span class="red" >${commodityBuyTotal.actually_paid_money!}</span>
+					</div>
+				</div>
+		</div>
+	</#if>
+			<div class="mod_attr mod_large">
+				<div class="item">
+					<div class="fl">合计</div>
+					<div class="fr">
+						￥<span class="red" id="send_cost">${commodityBuyTotal.total_price!}</span>
+					</div>
+				</div>
+			</div>
+			<div class="mod_attr mod_large">
+				<div class="item">
+					<div class="fl">订单状态</div>
+					<div class="fr">${key_value!}</div>
+				</div>
+			</div>
+
+		</div>
+
+	</div>
+</body>
+<script type="text/javascript">
+	$(function() {
+		myBabycontent = function(commodity_id, total_id, id) {
+			window.location.href = "${ctx}/mine/myBabycontent?mId=" + commodity_id + "&totalId="
+					+ total_id + "&id=" + id + "&order_status="
+					+ "${order_status!}";
+		};
+	});
+</script>
+</html>

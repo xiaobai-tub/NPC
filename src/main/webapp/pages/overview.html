@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html>
+<#include "include/header.html"/>
+<body>
+<div class="page">
+	<div class="content">
+		<div class="overview">
+			<div class="top1">
+				<span class="btn_del" onClick="emptyRecord()">清空</span>
+			</div>
+			<div id="divInfo" style="overflow-x: hidden; overflow-y: auto;">
+			<#list recordList as a>
+			<div class="item" id="${a.id!}">
+				<a href="javascript:void(0);" onclick="commodityDetail('${a.commodity_id}','${a.commodity_type}');return false"><img src="${server_uri!}${a.commodity_logo!}" class="pic"></a>
+				<div class="title">${a.commodity_name!}</div>
+				<div class="price">￥${a.commodity_price!}</div>
+				<div class="del" onClick="deleteRecord('${a.id!}')"><span>删除</span></div>
+				<div class="clear"></div>
+			</div>
+			</#list>
+			<#if pageNumber lt totalPage>
+				<li id="pageNum1" style="text-align: center;"><div onclick="nextPage1(${pageNumber}); return false;"><span class="more">更多<span class="arrow1"></span><span class="arrow2"></span></span></div></li>
+			</#if>
+			</div>
+		</div>
+	</div>
+</div>
+<script>
+$(function(){
+	function init() {
+		$(".overview .item").swipe({
+			swipe:function(event, direction, distance, duration, fingerCount) {
+				if(direction == "left"){
+					$(this).addClass("on")
+				}else if(direction == "right"){
+					$(this).removeClass("on")
+				}
+			},
+			allowPageScroll: "vertical"
+		})
+	}
+	init()
+	commodityDetail=function(commodity_id,commodity_type){
+		 if(commodity_type == "01"){
+			 window.location.href="${ctx}/home/commodityDetail?id="+commodity_id;
+		 }
+	 }
+	 deleteRecord=function(id){
+		$.ajax({
+			type:"POST",
+			url:"${ctx}/mine/deleteRecord?record_id="+id,
+			success : function(json){
+				if(json.code==0){
+					$("#"+id).remove();
+				}else{
+				dialog('#ok',3000,json.msg);
+				}
+				   
+			}
+		});
+	}
+	emptyRecord=function(){
+		$("#divInfo").html("");
+		$.ajax({
+			type:"POST",
+			url:"${ctx}/mine/emptyRecord",
+			success : function(json){
+				if(json.code==0){
+					$("#divInfo").html("");
+				}else{
+				dialog('#ok',3000,json.msg);
+				}
+			}
+			
+		});
+	}
+	nextPage1=function(pnum){
+		 $("#pageNum1").remove();
+		 $.post("${ctx}/mine/recordPage",{
+			 page:pnum+1
+				},function(json){
+					var server_uri="${server_uri!}";
+					var htm="";
+					var list=json.list;
+					for(var i in list){
+						htm+="<div class='item' id='"+list[i].id+"'>";
+						htm+="<a href='javascript:void(0);' onclick='commodityDetail(\""+list[i].commodity_id+"\",\""+list[i].commodity_type+"\");return false'><img src="+server_uri+""+list[i].commodity_logo+" class='pic'></a>";
+						htm+="<div class='title'>"+list[i].commodity_name+"</div>"; 
+						htm+="<div class='price'>￥"+list[i].commodity_price+"</div>";
+						htm+="<div class='del' onClick='deleteRecord(\""+list[i].id+"\")'><span>删除</span></div>";
+						htm+="<div class='clear'></div>";
+						htm+="</div>";	
+					}
+					if(json.pageNumber < json.totalPage){
+						htm+="<li id='pageNum1' style='text-align: center;'><div onclick='nextPage1("+json.pageNumber+"); return false;'><span class='more'>更多<span class='arrow1'></span><span class='arrow2'></span></span></div></li>";
+					}
+					$("#divInfo").append(htm);
+					$(".overview .item").swipe("destroy")
+					init()
+			},'json');
+	 };
+})
+</script>
+</body>
+</html>
